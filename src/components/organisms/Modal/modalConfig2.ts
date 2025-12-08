@@ -1,8 +1,13 @@
 import type { ModalMap2 } from '@/types/modal2';
 
-import DowngradePlan, { DowngradePlanModalProps } from './templates/Large/ChangePlan/DowngradePlan/DowngradePlan';
-import UpgradePlan, { UpgradePlanModalProps } from './templates/Large/ChangePlan/UpgradePlan/UpgradePlan';
 import ConfirmLarge, { ConfirmLargeModalProps } from './templates/Large/Confirm/Confirm';
+import CancelSubscription, {
+  CancelSubscriptionModalProps,
+} from './templates/Large/Custom/CancelSubscription/CancelSubscription';
+import DowngradePlan, {
+  DowngradePlanModalProps,
+} from './templates/Large/Custom/ChangePlan/DowngradePlan/DowngradePlan';
+import UpgradePlan, { UpgradePlanModalProps } from './templates/Large/Custom/ChangePlan/UpgradePlan/UpgradePlan';
 import Form, { FormModalProps } from './templates/Large/Form/Form';
 import Info, { InfoModalProps } from './templates/Large/Info/Info';
 import AlertMedium, { AlertMediumModalProps } from './templates/Medium/Alert/Alert';
@@ -21,6 +26,7 @@ export type LargeModalProps = {
 
   upgradePlan: UpgradePlanModalProps;
   downgradePlan: DowngradePlanModalProps;
+  cancelSubscription: CancelSubscriptionModalProps;
 };
 
 export const LargeModalRegistry = {
@@ -30,6 +36,7 @@ export const LargeModalRegistry = {
 
   upgradePlan: { Component: UpgradePlan },
   downgradePlan: { Component: DowngradePlan },
+  cancelSubscription: { Component: CancelSubscription },
 } satisfies ModalMap2<LargeModalProps>;
 
 export type MediumModalProps = {

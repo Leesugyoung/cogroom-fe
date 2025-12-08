@@ -103,3 +103,7 @@ export type UserSubscription = {
 export interface UserSubscriptionResponse extends ApiResponse {
   result: UserSubscription;
 }
+
+export interface CancelSubscriptionRequest {
+  reason: string;
+}

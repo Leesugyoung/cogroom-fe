@@ -17,6 +17,7 @@ import {
   UserPostListResponse,
   UserProfileResponse,
   UserSubscriptionResponse,
+  CancelSubscriptionRequest,
 } from '@/types/member';
 import {
   PaymentHistoryApiResponse,
@@ -154,6 +155,13 @@ const getPaymentDetail = async (params: PaymentDetailParams) => {
   return data.result;
 };
 
+/** 구독 취소 */
+const cancelSubscription = async ({ reason }: CancelSubscriptionRequest) => {
+  await axiosInstance.delete<CancelSubscriptionRequest, AxiosResponse<ApiResponse>>(END_POINTS.MEMBERS.SUBSCRIPTION, {
+    data: { reason },
+  });
+};
+
 export const memberApi = {
   getUserSummary,
   getUserDashboard,
@@ -174,4 +182,5 @@ export const memberApi = {
   registerCoupon,
   getPaymentHistory,
   getPaymentDetail,
+  cancelSubscription,
 };

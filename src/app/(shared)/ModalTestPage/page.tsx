@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import React, { useState } from 'react';
 
 import { DEFAULT_FEATURE_BANNER_1 } from '@/constants/image';
+import { useCancelSubscriptionFlow } from '@/hooks/flow/useCancelSubscriptionFlow';
 import { useLargeModalStore, useMediumModalStore, useSmallModalStore } from '@/stores/useModalStore2';
 
 const Container = styled.div`
@@ -40,6 +41,8 @@ export default function ModalTestPage() {
   const { open: largeStoreOpen, close: largeStoreClose } = useLargeModalStore();
   const { open: mediumStoreOpen, close: mediumStoreClose } = useMediumModalStore();
   const { open: smallStoreOpen, close: smallStoreClose } = useSmallModalStore();
+
+  const { openCancelFlow } = useCancelSubscriptionFlow();
 
   const [formInputValue, setFormInputValue] = useState('');
   const MAX_LENGTH = 100;
@@ -155,6 +158,10 @@ export default function ModalTestPage() {
     largeStoreOpen('downgradePlan', {});
   };
 
+  const openCancelSubscriptionFlow = () => {
+    openCancelFlow();
+  };
+
   return (
     <Container>
       <h1>Modal Component Test</h1>
@@ -172,6 +179,8 @@ export default function ModalTestPage() {
 
         <Button onClick={openUpgradePlanModal}>UpgradePlan 모달 띄우기</Button>
         <Button onClick={openDowngradePlanModal}>DowngradePlan 모달 띄우기</Button>
+
+        <Button onClick={openCancelSubscriptionFlow}>구독 취소 플로우 시작</Button>
       </Section>
 
       <hr />
