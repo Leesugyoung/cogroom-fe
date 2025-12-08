@@ -49,6 +49,32 @@ export interface BillingKeyResponse extends ApiResponse {
   };
 }
 
+type DiscountType = 'PERCENT' | 'AMOUNT';
+
+export interface CouponInfo {
+  couponId: number;
+  couponName: string;
+  couponType: string;
+  discountType: DiscountType;
+  discountValue: number;
+  minPayAmount: number;
+  maxPayAmount: number;
+  couponHistoryId: number;
+}
+
+export interface CouponsRequest {
+  cursor: number | null;
+}
+
+export interface CouponsResponse extends ApiResponse {
+  result: {
+    data: CouponInfo[];
+    nextCursor: number | null;
+    last: boolean;
+    totalElements?: number;
+  };
+}
+
 export interface CompletePlanRequest {
   paymentHistoryId: number;
   paymentMethod: PaymentMethod;
@@ -76,6 +102,22 @@ export interface VerifyPaymentData {
 
 export interface VerifyPaymentResponse extends ApiResponse {
   result: VerifyPaymentData;
+}
+
+export interface ApplyCouponRequest {
+  paymentHistoryId: string;
+  couponHistoryId: number | null;
+}
+
+export interface ApplyCouponResponse extends ApiResponse {
+  result: {
+    isPossible: boolean;
+    couponId: number;
+    couponName: string;
+    couponDiscount: number;
+    finalPrice: number;
+    couponHistoryId: number;
+  };
 }
 
 export interface PaymentHistory {

@@ -1,10 +1,12 @@
 import { http, HttpResponse } from 'msw';
 
 import { END_POINTS, HTTP_STATUS_CODE } from '@/constants/api';
-import type { VerifyPaymentRequest } from '@/types/payment';
+import type { ApplyCouponRequest, VerifyPaymentRequest } from '@/types/payment';
 
+import { applyCouponError, applyCouponSuccess } from '../data/payment/applyCouponData';
 import { changePlanSuccess } from '../data/payment/changePlanData';
 import { getBillingKeySuccess } from '../data/payment/getBillingKeyData';
+import { getCouponsSuccess } from '../data/payment/getCouponsData';
 import { getPlanInfoError, getPlanInfoSuccess } from '../data/payment/getPlanInfoData';
 import { getPlansSuccess } from '../data/payment/getPlansData';
 import { verifyPaymentError, verifyPaymentSuccess } from '../data/payment/verifyPaymentData';
@@ -40,6 +42,13 @@ export const paymentHandlers = [
     });
   }),
 
+  // 사용할 수 있는 쿠폰 목록 조회
+  http.get(END_POINTS.PAYMENTS.COUPONS, async () => {
+    return new HttpResponse(JSON.stringify(getCouponsSuccess), {
+      status: HTTP_STATUS_CODE.OK,
+    });
+  }),
+
   // 플랜 변경
   http.patch(END_POINTS.PAYMENTS.CHANGE_PLAN, async () => {
     return new HttpResponse(JSON.stringify(changePlanSuccess), {
@@ -59,6 +68,23 @@ export const paymentHandlers = [
     }
 
     return new HttpResponse(JSON.stringify(verifyPaymentSuccess), {
+      status: HTTP_STATUS_CODE.OK,
+    });
+  }),
+
+  // 쿠폰 적용
+  http.post(END_POINTS.PAYMENTS.APPLY_COUPON(':paymentHistoryId'), async ({ request, params }) => {
+    const { paymentHistoryId } = params;
+    const url = new URL(request.url);
+    const couponHistoryId = url.searchParams.get('couponHistoryId');
+
+    if (!paymentHistoryId || !couponHistoryId) {
+      return new HttpResponse(JSON.stringify(applyCouponError), {
+        status: HTTP_STATUS_CODE.BAD_REQUEST,
+      });
+    }
+
+    return new HttpResponse(JSON.stringify(applyCouponSuccess), {
       status: HTTP_STATUS_CODE.OK,
     });
   }),

@@ -1,6 +1,7 @@
 import type { ModalMap2 } from '@/types/modal2';
 
 import ConfirmLarge, { ConfirmLargeModalProps } from './templates/Large/Confirm/Confirm';
+import CouponBox, { CouponBoxModalProps } from './templates/Large/CouponBox/CouponBox';
 import CancelSubscription, {
   CancelSubscriptionModalProps,
 } from './templates/Large/Custom/CancelSubscription/CancelSubscription';
@@ -27,6 +28,7 @@ export type LargeModalProps = {
   upgradePlan: UpgradePlanModalProps;
   downgradePlan: DowngradePlanModalProps;
   cancelSubscription: CancelSubscriptionModalProps;
+  couponBox: CouponBoxModalProps;
 };
 
 export const LargeModalRegistry = {
@@ -37,6 +39,7 @@ export const LargeModalRegistry = {
   upgradePlan: { Component: UpgradePlan },
   downgradePlan: { Component: DowngradePlan },
   cancelSubscription: { Component: CancelSubscription },
+  couponBox: { Component: CouponBox },
 } satisfies ModalMap2<LargeModalProps>;
 
 export type MediumModalProps = {

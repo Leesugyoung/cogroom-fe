@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react'; // useEffect 추가
+import { useState, useEffect } from 'react';
 
 import Checkbox from '@/components/atoms/Checkbox/Checkbox';
 import OutlinedButton from '@/components/atoms/OutlinedButton/OutlinedButton';
@@ -18,11 +18,27 @@ import { usePaymentResume } from '@/hooks/api/payment/usePaymentResume';
 import { loadPaymentState } from '@/stores/paymentStorage';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useLargeModalStore } from '@/stores/useModalStore2';
-import { PaymentMethod } from '@/types/payment';
+import { PaymentMethod, ApplyCouponResponse } from '@/types/payment';
 import { checkPaymentMethods } from '@/utils/portone';
 
 import PaymentCard from './_components/PaymentCard/PaymentCard';
 import * as S from './page.styled';
+
+interface CouponResult {
+  isApplied: boolean;
+  couponName: string;
+  couponDiscount: number;
+  finalPrice: number | null;
+}
+
+const INITIAL_COUPON_RESULT: CouponResult = {
+  isApplied: false,
+  couponName: '미사용',
+  couponDiscount: 0,
+  finalPrice: null,
+};
+
+const INITIAL_SELECTED_COUPON_ID: number | null = null;
 
 const isFreeTrialAvailable = (trialParam: boolean, isTrialUsed: boolean, planId: number) => {
   const monthlyPlanId = PLAN_MAPPING['MONTH'];
@@ -48,6 +64,9 @@ export default function Payment() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod>('CARD');
   const [isFlowProcessing, setIsFlowProcessing] = useState<boolean>(false); // 버튼 클릭으로 시작된 처리 상태
 
+  const [couponApplyResult, setCouponApplyResult] = useState<CouponResult>(INITIAL_COUPON_RESULT);
+  const [lastSelectedCouponId, setLastSelectedCouponId] = useState<number | null>(INITIAL_SELECTED_COUPON_ID);
+
   const { data: userSummary } = useGetUserSummary();
   const { data: billingKey } = useGetBillingKey();
   const { data: plans } = useGetPlans();
@@ -58,6 +77,11 @@ export default function Payment() {
 
   const { startPaymentFlow } = usePaymentProcessor();
   const { isResuming } = usePaymentResume();
+
+  useEffect(() => {
+    setCouponApplyResult(INITIAL_COUPON_RESULT);
+    setLastSelectedCouponId(INITIAL_SELECTED_COUPON_ID);
+  }, [planInfo?.paymentHistoryId]);
 
   useEffect(() => {
     // 1. URL에 identityVerificationId 파라미터가 있고,
@@ -81,6 +105,13 @@ export default function Payment() {
     return currentPlanId === PLAN_MAPPING.MONTH || currentPlanId === PLAN_MAPPING.YEAR;
   };
 
+  const getFinalDisplayedPrice = () => {
+    if (couponApplyResult.finalPrice !== null) {
+      return couponApplyResult.finalPrice.toLocaleString('ko-KR');
+    }
+    return planInfo?.monthlyPrice?.toLocaleString('ko-KR') ?? '-';
+  };
+
   /**
    * 현재 구독 상태와 선택된 플랜을 기반으로 버튼의 '액션 타입'을 결정합니다.
    */
@@ -91,13 +122,13 @@ export default function Payment() {
 
     if (isSubscribed()) {
       if (currentPlanId === MONTH) {
-        if (selectedPlanId === MONTH) return 'NONE'; // 동일 플랜
-        if (selectedPlanId === YEAR) return 'UPGRADE'; // 업그레이드
+        if (selectedPlanId === MONTH) return 'NONE';
+        if (selectedPlanId === YEAR) return 'UPGRADE';
       }
 
       if (currentPlanId === YEAR) {
-        if (selectedPlanId === YEAR) return 'NONE'; // 동일 플랜
-        if (selectedPlanId === MONTH) return 'DOWNGRADE'; // 다운그레이드
+        if (selectedPlanId === YEAR) return 'NONE';
+        if (selectedPlanId === MONTH) return 'DOWNGRADE';
       }
     }
 
@@ -144,6 +175,38 @@ export default function Payment() {
 
     // 나머지 경우 (업그레이드, 다운그레이드, PAYMENT)는 활성화
     return false;
+  };
+
+  const openCouponBoxModal = () => {
+    if (!planInfo) {
+      alert('결제 정보를 불러오는 중입니다.');
+      return;
+    }
+
+    largeStoreOpen('couponBox', {
+      paymentHistoryId: planInfo.paymentHistoryId,
+      initialSelectedCouponId: lastSelectedCouponId,
+      onApplySuccess: (result: ApplyCouponResponse['result']) => {
+        if (result.couponHistoryId === null) {
+          setCouponApplyResult(INITIAL_COUPON_RESULT);
+          setLastSelectedCouponId(INITIAL_SELECTED_COUPON_ID); // null로 설정
+        } else if (result.isPossible) {
+          // 쿠폰 적용 성공
+          setCouponApplyResult({
+            isApplied: true,
+            couponName: result.couponName,
+            couponDiscount: result.couponDiscount,
+            finalPrice: result.finalPrice,
+          });
+          setLastSelectedCouponId(result.couponHistoryId);
+        } else {
+          // 적용할 수 없는 경우 (서버에서 reject)
+          alert('쿠폰을 적용할 수 없습니다.');
+          setCouponApplyResult(INITIAL_COUPON_RESULT);
+          setLastSelectedCouponId(INITIAL_SELECTED_COUPON_ID);
+        }
+      },
+    });
   };
 
   const handleClick = async () => {
@@ -229,7 +292,7 @@ export default function Payment() {
             <S.PaymentDetail>
               <S.InfoWrapper>
                 <S.InfoText>코그룸 프리미엄 구독</S.InfoText>
-                <S.PlanPrice>{planInfo?.basePrice ?? '-'} KRW</S.PlanPrice>
+                <S.PlanPrice>{planInfo?.basePrice?.toLocaleString('ko-KR') ?? '-'} KRW</S.PlanPrice>
               </S.InfoWrapper>
 
               <S.DiscountInfo>
@@ -240,20 +303,35 @@ export default function Payment() {
                     label='기본 적용 할인'
                     round
                   />
-                  <S.DiscountPrice>-{planInfo?.baseDiscountAmount ?? 0} KRW</S.DiscountPrice>
+                  <S.DiscountPrice>-{planInfo?.baseDiscountAmount?.toLocaleString('ko-KR') ?? 0} KRW</S.DiscountPrice>
                 </S.InfoWrapper>
               </S.DiscountInfo>
 
-              <S.InfoWrapper>
-                <S.InfoText>쿠폰 사용</S.InfoText>
-                <OutlinedButton
-                  size='sm'
-                  color='assistive'
-                  label='선택하기'
-                  interactionVariant='normal'
-                  isDisabled
-                />
-              </S.InfoWrapper>
+              <S.CouponInfo>
+                <S.InfoWrapper>
+                  <S.InfoText>쿠폰 사용</S.InfoText>
+                  <OutlinedButton
+                    size='sm'
+                    color='primary'
+                    label='선택하기'
+                    interactionVariant='normal'
+                    onClick={openCouponBoxModal}
+                    isDisabled={isProcessing}
+                  />
+                </S.InfoWrapper>
+                {couponApplyResult.isApplied && (
+                  <S.InfoWrapper>
+                    <SolidTag
+                      color='blue'
+                      label={couponApplyResult.couponName}
+                      round
+                    />
+                    <S.DiscountPrice>
+                      {`-${couponApplyResult.couponDiscount.toLocaleString('ko-KR')} KRW`}
+                    </S.DiscountPrice>
+                  </S.InfoWrapper>
+                )}
+              </S.CouponInfo>
 
               <S.PaymentMethod>
                 <S.PaymentMethodTitle>결제 수단</S.PaymentMethodTitle>
@@ -287,7 +365,7 @@ export default function Payment() {
             <S.PaymentResult>
               <S.InfoWrapper>
                 <S.ResultText>결제 및 총합</S.ResultText>
-                <S.ResultText>{planInfo?.monthlyPrice ?? '-'} KRW</S.ResultText>
+                <S.ResultText>{getFinalDisplayedPrice()} KRW</S.ResultText>
               </S.InfoWrapper>
 
               <S.AgreementSection>

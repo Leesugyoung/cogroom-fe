@@ -3,9 +3,13 @@ import { AxiosResponse } from 'axios';
 import { END_POINTS } from '@/constants/api';
 import { ApiResponse } from '@/types/api';
 import {
+  ApplyCouponRequest,
+  ApplyCouponResponse,
   BillingKeyResponse,
   ChangePlanRequest,
   CompletePlanRequest,
+  CouponsRequest,
+  CouponsResponse,
   PlanInfoRequest,
   PlanInfoResponse,
   PlansResponse,
@@ -32,6 +36,15 @@ const getPlans = async () => {
 /** 빌링키 조회 — 신규 결제자 / 플랜 업데이트 대상 확인용 */
 const getBillingKey = async () => {
   const { data } = await axiosInstance.get<BillingKeyResponse>(END_POINTS.PAYMENTS.BILLING_KEY);
+
+  return data.result;
+};
+
+/** 사용할 수 있는 쿠폰 목록 조회 */
+const getCoupons = async ({ cursor }: CouponsRequest) => {
+  const { data } = await axiosInstance.get<CouponsResponse>(END_POINTS.PAYMENTS.COUPONS, {
+    params: { cursor },
+  });
 
   return data.result;
 };
@@ -65,4 +78,22 @@ const verifyPayment = async ({ identityVerificationId, paymentHistoryId }: Verif
   return data.result;
 };
 
-export const paymentApi = { getPlanInfo, getPlans, getBillingKey, completePlan, changePlan, verifyPayment };
+/** 쿠폰 적용 */
+const applyCoupon = async ({ paymentHistoryId, couponHistoryId }: ApplyCouponRequest) => {
+  const urlWithQuery = `${END_POINTS.PAYMENTS.APPLY_COUPON(paymentHistoryId)}?couponHistoryId=${couponHistoryId}`;
+
+  const { data } = await axiosInstance.post<ApplyCouponRequest, AxiosResponse<ApplyCouponResponse>>(urlWithQuery, {});
+
+  return data.result;
+};
+
+export const paymentApi = {
+  getPlanInfo,
+  getPlans,
+  getBillingKey,
+  getCoupons,
+  completePlan,
+  changePlan,
+  verifyPayment,
+  applyCoupon,
+};

@@ -34,6 +34,7 @@ export const PaymentDetail = styled.div`
 export const InfoWrapper = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
 `;
 
 export const InfoText = styled.p`
@@ -52,6 +53,12 @@ export const DiscountPrice = styled.p`
 `;
 
 export const DiscountInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+`;
+
+export const CouponInfo = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
