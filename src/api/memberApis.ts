@@ -139,9 +139,7 @@ const getCouponList = async () => {
 
 /** 쿠폰 등록 */
 const registerCoupon = async (code: string) => {
-  const { data } = await axiosInstance.post<RegisterCouponResponse>(
-    `${END_POINTS.MEMBERS.COUPON}?code=${encodeURIComponent(code)}`,
-  );
+  const { data } = await axiosInstance.post<RegisterCouponResponse>(END_POINTS.MEMBERS.COUPON, { code });
   return data;
 };
 
