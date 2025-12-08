@@ -49,7 +49,12 @@ export default function Form({
 
   const handlePrimaryClick = () => {
     onValueChange?.(localValue);
-    primaryButton.onClick?.();
+    primaryButton.onClick?.(localValue);
+  };
+
+  const handleAssistiveClick = () => {
+    onValueChange?.(localValue);
+    assistiveButton?.onClick?.(localValue);
   };
 
   return (
@@ -84,7 +89,7 @@ export default function Form({
             color='assistive'
             interactionVariant='normal'
             fillContainer
-            onClick={assistiveButton.onClick}
+            onClick={handleAssistiveClick}
           />
         )}
         <OutlinedButton

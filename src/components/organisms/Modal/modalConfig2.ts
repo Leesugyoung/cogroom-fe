@@ -17,7 +17,7 @@ import AlertSmall, { AlertSmallModalProps } from './templates/Small/Alert/Alert'
 
 export type ButtonProps = {
   label: string;
-  onClick: () => void;
+  onClick: (value?: string) => void;
 };
 
 export type LargeModalProps = {

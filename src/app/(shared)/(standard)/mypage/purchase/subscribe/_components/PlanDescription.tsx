@@ -6,6 +6,7 @@ import OutlinedButton from '@/components/atoms/OutlinedButton/OutlinedButton';
 import SolidButton from '@/components/atoms/SolidButton/SolidButton';
 import TextButton from '@/components/atoms/TextButton/TextButton';
 import { PLAN_TYPES, PREMIUM_BENEFITS } from '@/constants/common';
+import { useCancelSubscriptionFlow } from '@/hooks/flow/useCancelSubscriptionFlow';
 import { useLargeModalStore } from '@/stores/useModalStore2';
 import { UserSubscription } from '@/types/member';
 import { formatDayAsDotYYYYMMDD, calculateDaysBetween } from '@/utils/date/formatDay';
@@ -18,6 +19,7 @@ interface PlanDescriptionProps {
 
 export const PlanDescription = ({ subscription }: PlanDescriptionProps) => {
   const { open: largeModalOpen, close: largeModalClose } = useLargeModalStore();
+  const { openCancelFlow } = useCancelSubscriptionFlow();
   const router = useRouter();
 
   const planId = subscription?.planId;
@@ -69,7 +71,10 @@ export const PlanDescription = ({ subscription }: PlanDescriptionProps) => {
       },
       assistiveButton: {
         label: '구독 취소하기',
-        onClick: largeModalClose,
+        onClick: () => {
+          largeModalClose();
+          openCancelFlow();
+        },
       },
     });
   };

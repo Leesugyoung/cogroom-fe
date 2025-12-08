@@ -67,8 +67,10 @@ export const useCancelSubscriptionFlow = () => {
       },
       assistiveButton: {
         label: '플랜 취소하기',
-        onClick: () => {
-          startStep3(cancelReason);
+        onClick: (reason?: string) => {
+          const finalReason = reason || cancelReason;
+
+          startStep3(finalReason);
         },
       },
     });
