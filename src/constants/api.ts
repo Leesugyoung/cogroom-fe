@@ -78,6 +78,9 @@ export const END_POINTS = {
     /** 쿠폰 등록 (POST) */
     COUPON: `${BASE_PATH_V1.MEMBERS}/me/coupon`,
 
+    /** 정기결제에 쿠폰 적용 (POST) */
+    APPLY_COUPON: `${BASE_PATH_V1.MEMBERS}/coupon/apply`,
+
     /** 내가 좋아요한 게시글 목록 조회 (GET) */
     POSTS_LIKES: `${BASE_PATH_V1.MEMBERS}/me/posts/likes`,
 
@@ -177,9 +180,6 @@ export const END_POINTS = {
 
     /** 플랜 변경 (PATCH) */
     CHANGE_PLAN: `${BASE_PATH_V1.PAYMENTS}/plan/change`,
-
-    /** 플랜 변경 요청 (POST) */
-    PLAN_CHANGE: `${BASE_PATH_V1.PAYMENTS}/plan/change`,
 
     /** 결제 인증 정보 조회 (POST) */
     VERIFY: `${BASE_PATH_V1.PAYMENTS}/verify`,

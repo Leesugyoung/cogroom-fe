@@ -6,6 +6,10 @@ export interface RegisterCouponRequest {
 
 export interface RegisterCouponResponse extends ApiResponse {}
 
+export interface ApplyCouponRequest {
+  couponHistoryId: number;
+}
+
 export interface Coupon {
   id: number;
   name: string;

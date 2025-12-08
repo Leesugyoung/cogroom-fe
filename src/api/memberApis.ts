@@ -2,7 +2,7 @@ import { AxiosResponse } from 'axios';
 
 import { END_POINTS } from '@/constants/api';
 import { ApiResponse, AxiosMeta } from '@/types/api';
-import { RegisterCouponResponse } from '@/types/coupon';
+import { ApplyCouponRequest, RegisterCouponResponse } from '@/types/coupon';
 import {
   CheckNicknameRequest,
   CheckNicknameResponse,
@@ -145,6 +145,15 @@ const registerCoupon = async (code: string) => {
   return data;
 };
 
+/** 정기결제에 쿠폰 적용  */
+const applyCoupon = async ({ couponHistoryId }: ApplyCouponRequest) => {
+  const { data } = await axiosInstance.post<ApiResponse>(END_POINTS.MEMBERS.APPLY_COUPON, null, {
+    params: { couponHistoryId },
+  });
+
+  return data;
+};
+
 /** 결제 내역 조회 */
 const getPaymentHistory = async (params?: PaymentHistoryParams) => {
   const { data } = await axiosInstance.get<PaymentHistoryApiResponse>(END_POINTS.MEMBERS.PAYMENT_HISTORY, { params });
@@ -198,6 +207,7 @@ export const memberApi = {
   getUserSubscription,
   getCouponList,
   registerCoupon,
+  applyCoupon,
   getPaymentHistory,
   getPaymentDetail,
   cancelSubscription,

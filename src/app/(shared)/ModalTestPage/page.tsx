@@ -162,6 +162,15 @@ export default function ModalTestPage() {
     openCancelFlow();
   };
 
+  const openApplyCouponModal = () => {
+    largeStoreOpen('applyCoupon', {
+      price: '5,000원',
+      name: '친구 초대 쿠폰',
+      expiredDate: '2025년 12월 31일',
+      couponHistoryId: 12345,
+    });
+  };
+
   return (
     <Container>
       <h1>Modal Component Test</h1>
@@ -181,6 +190,7 @@ export default function ModalTestPage() {
         <Button onClick={openDowngradePlanModal}>DowngradePlan 모달 띄우기</Button>
 
         <Button onClick={openCancelSubscriptionFlow}>구독 취소 플로우 시작</Button>
+        <Button onClick={openApplyCouponModal}>ApplyCoupon 모달 띄우기</Button>
       </Section>
 
       <hr />

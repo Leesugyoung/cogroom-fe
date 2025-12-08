@@ -1,30 +1,14 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { axiosInstance } from '@/api/axios/axiosInstance';
 import { HTTPError } from '@/api/axios/errors/HTTPError';
-import { END_POINTS } from '@/constants/api';
+import { paymentApi } from '@/api/paymentApis';
 import { useAlertModalStore } from '@/stores/useModalStore';
-import { ApiResponse } from '@/types/api';
-
-interface PlanChangeRequest {
-  paymentHistoryId: number;
-  applyNow: boolean;
-}
-
-const planChangeApi = async ({ paymentHistoryId, applyNow }: PlanChangeRequest) => {
-  const { data } = await axiosInstance.patch<ApiResponse>(END_POINTS.PAYMENTS.PLAN_CHANGE, {
-    paymentHistoryId,
-    applyNow,
-  });
-
-  return data;
-};
 
 export const usePlanChangeMutation = () => {
   const { open: openAlert } = useAlertModalStore();
 
   const mutation = useMutation({
-    mutationFn: planChangeApi,
+    mutationFn: paymentApi.changePlan,
     onSuccess: () => {
       openAlert('alert', { message: '플랜 변경이 완료되었습니다.' });
     },

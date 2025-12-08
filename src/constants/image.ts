@@ -10,6 +10,7 @@ export const REPORT_IMAGE: string = 'https://cdn.cogroom.com/default_image/Repor
 // Logo
 export const DEFAULT_LOGO_SYMBOL_NORMAL: string = 'https://cdn.cogroom.com/default_image/Logo/Logo_Symbol_normal.svg';
 export const DEFAULT_LOGO_SYMBOL_GRAY: string = 'https://cdn.cogroom.com/default_image/Logo/Logo_Symbol_gray.svg';
+export const DEFAULT_LOGO_SYMBOL_WHITE: string = 'https://cdn.cogroom.com/default_image/Logo/Logo_Symbol_white.png';
 export const DEFAULT_LOGO_TYPE_NORMAL: string = 'https://cdn.cogroom.com/default_image/Logo/Logo_Type_normal.svg';
 export const DEFAULT_LOGO_HORIZONTAL_NORMAL: string =
   'https://cdn.cogroom.com/default_image/Logo/Logo_Horizontal_normal.svg';
@@ -68,3 +69,6 @@ export const DEFAULT_FEATURE_BANNER_1: string = 'https://cdn.cogroom.com/default
 export const DEFAULT_FEATURE_BANNER_2: string = 'https://cdn.cogroom.com/default_image/Feature2.png';
 export const DEFAULT_FEATURE_BANNER_3: string = 'https://cdn.cogroom.com/default_image/Feature3.png';
 export const DEFAULT_UPGRADE_BANNER: string = 'https://cdn.cogroom.com/default_image/Subscription_Upgrade.png';
+
+// Coupon
+export const DEFAULT_COUPON_TICKET: string = 'https://cdn.cogroom.com/default_image/Coupon_Ticket.png';
