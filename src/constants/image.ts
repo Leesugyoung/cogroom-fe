@@ -70,5 +70,8 @@ export const DEFAULT_FEATURE_BANNER_2: string = 'https://cdn.cogroom.com/default
 export const DEFAULT_FEATURE_BANNER_3: string = 'https://cdn.cogroom.com/default_image/Feature3.png';
 export const DEFAULT_UPGRADE_BANNER: string = 'https://cdn.cogroom.com/default_image/Subscription_Upgrade.png';
 
+// Payment
+export const DEFAULT_PAYMENT_SUCCESS: string = 'https://cdn.cogroom.com/default_image/Payment_Success.png';
+
 // Coupon
 export const DEFAULT_COUPON_TICKET: string = 'https://cdn.cogroom.com/default_image/Coupon_Ticket.png';

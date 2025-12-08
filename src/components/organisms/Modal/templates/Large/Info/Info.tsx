@@ -26,6 +26,7 @@ export default function Info({ title, description, imageSrc, primaryButton, assi
         alt='모달 이미지'
         width={287}
         height={189}
+        style={{ objectFit: 'none', objectPosition: 'center' }}
       />
       <S.Description>{description}</S.Description>
       <S.ButtonWrapper>
