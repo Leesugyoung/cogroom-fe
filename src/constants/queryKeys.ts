@@ -17,6 +17,7 @@ const MEMBER_QUERY_KEYS = {
   MEMBER_LIKESPOSTS: ['member', 'posts', 'likes'],
   MEMBER_LIKESCOMMENTS: ['member', 'comments', 'likes'],
   MEMBER_SUBSCRIPTION: ['member', 'subscription'],
+  MEMBER_PAYMENT_METHOD: ['member', 'payment-method'],
   PROFILE: ['member', 'profile'],
 } as const;
 

@@ -107,3 +107,25 @@ export interface UserSubscriptionResponse extends ApiResponse {
 export interface CancelSubscriptionRequest {
   reason: string;
 }
+
+export type PaymentMethodType = 'CARD' | 'KAKAO_PAY';
+
+export type PaymentMethodItem = {
+  paymentMethodId: number;
+  cardName?: string;
+  cardNum?: number | null;
+  type: PaymentMethodType;
+  isPresent: boolean;
+};
+
+export type PaymentMethod = {
+  data: PaymentMethodItem[];
+};
+
+export interface PaymentMethodResponse extends ApiResponse {
+  result: PaymentMethod;
+}
+
+export interface DeletePaymentMethodRequest {
+  paymentMethodId: number;
+}

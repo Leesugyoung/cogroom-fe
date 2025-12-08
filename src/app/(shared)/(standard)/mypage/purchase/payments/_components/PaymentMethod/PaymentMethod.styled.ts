@@ -11,7 +11,7 @@ export const MethodContainer = styled.div`
 export const PaymentMethodsWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  width: fit-content;
+  width: 100%;
 
   gap: 1.2rem;
   padding-top: 1.2rem;
@@ -25,6 +25,10 @@ export const PaymentMethodsWrapper = styled.div`
   svg.naver path {
     fill: ${({ theme }) => theme.brandColors.naver} !important;
   }
+`;
+
+export const ButtonBox = styled.div`
+  width: fit-content;
 `;
 
 export const Divider = styled.div`
@@ -45,4 +49,27 @@ export const CheckboxWrapper = styled.div`
 export const CheckboxLabel = styled.p`
   ${({ theme }) => theme.typography.label2.regular};
   color: ${({ theme }) => theme.semantic.label.normal};
+`;
+
+export const DefaultPaymentWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+  height: 6rem;
+  width: 100%;
+
+  padding: 0 0.8rem;
+`;
+
+export const DefaultCardBox = styled.div`
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+`;
+
+export const CardName = styled.div`
+  ${({ theme }) => theme.typography.body2.medium};
+  color: ${({ theme }) => theme.palette.neutral[40]};
 `;

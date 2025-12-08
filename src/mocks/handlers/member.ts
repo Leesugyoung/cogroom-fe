@@ -8,6 +8,7 @@ import { registerCouponSuccess, registerCouponNotFound } from '../data/coupon/re
 import { checkNicknameError, checkNicknameSuccess } from '../data/member/checkNicknameData';
 import { deleteUserPostError, deleteUserPostSuccess } from '../data/member/deleteUserPostData';
 import { editUserInfoError, editUserInfoSuccess } from '../data/member/editUserInfoData';
+import { getPaymentMethodSuccess } from '../data/member/getPaymentMethodData';
 import { getUserCommentListSuccess } from '../data/member/getUserCommentListData';
 import { getUserDailySuccess } from '../data/member/getUserDailyData';
 import { getUserDashboardSuccess } from '../data/member/getUserDashboardData';
@@ -209,6 +210,22 @@ export const memberHandlers = [
     }
 
     return new HttpResponse(JSON.stringify(registerCouponSuccess), {
+      status: HTTP_STATUS_CODE.OK,
+    });
+  }),
+
+  // 결제 수단 조회
+  http.get(END_POINTS.MEMBERS.PAYMENT_METHOD, async () => {
+    return new HttpResponse(JSON.stringify(getPaymentMethodSuccess), {
+      status: HTTP_STATUS_CODE.OK,
+    });
+  }),
+
+  // 결제 수단 삭제
+  http.delete(END_POINTS.MEMBERS.PAYMENT_METHOD, async ({ request }) => {
+    const url = new URL(request.url);
+
+    return new HttpResponse(null, {
       status: HTTP_STATUS_CODE.OK,
     });
   }),

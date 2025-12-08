@@ -18,6 +18,8 @@ import {
   UserProfileResponse,
   UserSubscriptionResponse,
   CancelSubscriptionRequest,
+  PaymentMethodResponse,
+  DeletePaymentMethodRequest,
 } from '@/types/member';
 import {
   PaymentHistoryApiResponse,
@@ -162,6 +164,22 @@ const cancelSubscription = async ({ reason }: CancelSubscriptionRequest) => {
   });
 };
 
+/** 결제 수단 조회 */
+const getPaymentMethod = async () => {
+  const { data } = await axiosInstance.get<PaymentMethodResponse>(END_POINTS.MEMBERS.PAYMENT_METHOD);
+  return data.result;
+};
+
+/** 결제 수단 삭제 */
+const deletePaymentMethod = async ({ paymentMethodId }: DeletePaymentMethodRequest) => {
+  await axiosInstance.delete<DeletePaymentMethodRequest, AxiosResponse<ApiResponse>>(
+    END_POINTS.MEMBERS.PAYMENT_METHOD,
+    {
+      params: { paymentMethodId },
+    },
+  );
+};
+
 export const memberApi = {
   getUserSummary,
   getUserDashboard,
@@ -183,4 +201,6 @@ export const memberApi = {
   getPaymentHistory,
   getPaymentDetail,
   cancelSubscription,
+  getPaymentMethod,
+  deletePaymentMethod,
 };

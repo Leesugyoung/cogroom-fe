@@ -8,6 +8,7 @@ export type SolidTagColor = 'blue' | 'green' | 'violet' | 'orange' | 'cyan' | 'p
 export interface SolidTagStyleProps {
   color: SolidTagColor;
   round?: boolean;
+  hasClick?: boolean;
 }
 
 const colorStyles: Record<SolidTagColor, (theme: Theme) => SerializedStyles> = {
@@ -49,6 +50,7 @@ export const SolidTag = styled.span<SolidTagStyleProps>`
 
   padding: 0.4rem 1.2rem;
   border-radius: ${({ round }) => (round ? '9999px' : '0.8rem')};
+  cursor: ${({ hasClick }) => (hasClick ? 'pointer' : 'default')};
 
   ${({ theme, color }) => colorStyles[color](theme)};
   ${({ theme }) => theme.typography.label2.regular};

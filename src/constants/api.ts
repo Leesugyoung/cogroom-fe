@@ -104,6 +104,9 @@ export const END_POINTS = {
 
     /** 결제 상세 정보 조회 (GET) */
     PAYMENT_DETAIL: `${BASE_PATH_V1.MEMBERS}/me/payment`,
+
+    /** 결제 수단 조회 (GET) / 삭제 (DELETE) */
+    PAYMENT_METHOD: `${BASE_PATH_V1.MEMBERS}/me/plan/payment-method`,
   },
 
   DAILY: {

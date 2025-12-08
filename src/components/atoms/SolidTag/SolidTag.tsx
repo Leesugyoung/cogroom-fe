@@ -20,6 +20,7 @@ export default function SolidTag({ label, color, round, onClick, stopPropagation
     <S.SolidTag
       color={color}
       round={round}
+      hasClick={!!onClick}
       onClick={onClick ? handleClick : undefined}
     >
       {label}
