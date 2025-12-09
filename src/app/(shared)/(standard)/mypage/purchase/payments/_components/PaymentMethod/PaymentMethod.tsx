@@ -1,26 +1,24 @@
 'use client';
 
-import { useState } from 'react';
-
 import Kakao from '@/assets/icons/kakao.svg';
 import Plus from '@/assets/icons/plus.svg';
-import Checkbox from '@/components/atoms/Checkbox/Checkbox';
 import OutlinedButton from '@/components/atoms/OutlinedButton/OutlinedButton';
 import SolidTag from '@/components/atoms/SolidTag/SolidTag';
 import TextButton from '@/components/atoms/TextButton/TextButton';
+import { useChangeDefaultPaymentMethodMutation } from '@/hooks/api/member/useChangeDefaultPaymentMethod';
 import { useDeletePaymentMethodMutation } from '@/hooks/api/member/useDeletePaymentMethod';
 import useGetPaymentMethod from '@/hooks/api/member/useGetPaymentMethod';
 import { useRegisterPaymentMethod } from '@/hooks/api/payment/useRegisterPaymentMethod';
-import { useMediumModalStore } from '@/stores/useModalStore2';
+import { useLargeModalStore } from '@/stores/useModalStore2';
 
 import * as S from './PaymentMethod.styled';
 
 export const PaymentMethod = () => {
-  const [savePaymentMethod, setSavePaymentMethod] = useState(false);
   const { registerPaymentMethod } = useRegisterPaymentMethod();
   const { data: paymentMethod, refetch } = useGetPaymentMethod();
   const { deletePaymentMethod } = useDeletePaymentMethodMutation();
-  const { open: mediumStoreOpen, close: mediumStoreClose } = useMediumModalStore();
+  const { changeDefaultPaymentMethod } = useChangeDefaultPaymentMethodMutation();
+  const { open: largeStoreOpen, close: largeStoreClose } = useLargeModalStore();
 
   const handleAddCard = () => {
     registerPaymentMethod({
@@ -49,25 +47,50 @@ export const PaymentMethod = () => {
   const kakaoPayment = paymentMethod?.data?.find((item) => item.type === 'KAKAO_PAY');
 
   const handleDeleteConfirm = (paymentMethodId: number) => {
-    mediumStoreOpen('confirm', {
+    largeStoreOpen('confirm', {
       title: '결제 수단 삭제',
       description: `결제 수단을 삭제할까요?`,
       primaryButton: {
         label: '삭제하기',
         onClick: () => {
-          mediumStoreClose();
+          largeStoreClose();
           handleDeletePaymentMethod(paymentMethodId);
         },
       },
       assistiveButton: {
         label: '취소',
-        onClick: mediumStoreClose,
+        onClick: largeStoreClose,
       },
     });
   };
 
   const handleDeletePaymentMethod = (paymentMethodId: number) => {
     deletePaymentMethod(
+      { paymentMethodId },
+      {
+        onSuccess: () => {
+          refetch();
+        },
+      },
+    );
+  };
+
+  const handleChangeDefaultPaymentMethodConfirm = (paymentMethodId: number) => {
+    largeStoreOpen('confirm', {
+      title: '대표 수단을 변경할까요?',
+      description: '다음 구독부터 대표수단으로 자동 결제돼요',
+      primaryButton: {
+        label: '확인',
+        onClick: () => {
+          largeStoreClose();
+          handleChangeDefaultPaymentMethod(paymentMethodId);
+        },
+      },
+    });
+  };
+
+  const handleChangeDefaultPaymentMethod = (paymentMethodId: number) => {
+    changeDefaultPaymentMethod(
       { paymentMethodId },
       {
         onSuccess: () => {
@@ -97,8 +120,10 @@ export const PaymentMethod = () => {
               </S.CardName>
               <SolidTag
                 label={card.isPresent ? '대표' : '대표 수단으로 설정'}
-                color='blue'
-                // onClick={() => console.log('카드 대표 변경 클릭', card.cardName)}
+                color={card.isPresent ? 'green' : 'blue'}
+                onClick={
+                  card.isPresent ? undefined : () => handleChangeDefaultPaymentMethodConfirm(card.paymentMethodId)
+                }
               />
             </S.DefaultCardBox>
 
@@ -143,8 +168,12 @@ export const PaymentMethod = () => {
               <S.CardName>연동됨</S.CardName>
               <SolidTag
                 label={kakaoPayment?.isPresent ? '대표' : '대표 수단으로 설정'}
-                color='blue'
-                // onClick={() => console.log('카카오페이 대표 변경 클릭')}
+                color={kakaoPayment?.isPresent ? 'green' : 'blue'}
+                onClick={
+                  kakaoPayment?.isPresent
+                    ? undefined
+                    : () => handleChangeDefaultPaymentMethodConfirm(kakaoPayment!.paymentMethodId)
+                }
               />
             </S.DefaultCardBox>
 
@@ -173,16 +202,6 @@ export const PaymentMethod = () => {
       </S.PaymentMethodsWrapper>
 
       <S.Divider />
-
-      <S.CheckboxWrapper>
-        <Checkbox
-          size='nm'
-          isChecked={savePaymentMethod}
-          onToggle={setSavePaymentMethod}
-          interactionVariant='normal'
-        />
-        <S.CheckboxLabel>선택한 결제 수단을 다음에도 사용</S.CheckboxLabel>
-      </S.CheckboxWrapper>
     </S.MethodContainer>
   );
 };

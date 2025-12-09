@@ -129,3 +129,7 @@ export interface PaymentMethodResponse extends ApiResponse {
 export interface DeletePaymentMethodRequest {
   paymentMethodId: number;
 }
+
+export interface ChangeDefaultPaymentMethodRequest {
+  paymentMethodId: number;
+}

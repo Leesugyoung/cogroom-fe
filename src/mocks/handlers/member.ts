@@ -229,4 +229,44 @@ export const memberHandlers = [
       status: HTTP_STATUS_CODE.OK,
     });
   }),
+
+  // 대표 결제 수단 변경
+  http.patch(END_POINTS.MEMBERS.PAYMENT_METHOD, async ({ request }) => {
+    const url = new URL(request.url);
+    const paymentMethodId = url.searchParams.get('paymentMethodId');
+
+    if (!paymentMethodId) {
+      return new HttpResponse(
+        JSON.stringify({
+          isSuccess: false,
+          code: 'PAYMENT_METHOD_NOT_FOUND',
+          message: '결제 수단이 존재하지 않습니다.',
+        }),
+        {
+          status: HTTP_STATUS_CODE.BAD_REQUEST,
+        },
+      );
+    }
+
+    // 테스트용으로 특정 ID에 대해 이미 대표 수단 에러 반환
+    if (paymentMethodId === '999') {
+      return new HttpResponse(
+        JSON.stringify({
+          isSuccess: false,
+          code: 'ALREADY_PRESENTED_PAYMENT_METHOD',
+          message: '이미 대표 수단입니다.',
+        }),
+        {
+          status: HTTP_STATUS_CODE.BAD_REQUEST,
+        },
+      );
+    }
+
+    return new HttpResponse(
+      JSON.stringify({
+        code: 'SUCCESS',
+        message: '요청에 성공했습니다.',
+      }),
+    );
+  }),
 ];

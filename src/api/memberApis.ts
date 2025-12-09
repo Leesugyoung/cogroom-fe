@@ -20,6 +20,7 @@ import {
   CancelSubscriptionRequest,
   PaymentMethodResponse,
   DeletePaymentMethodRequest,
+  ChangeDefaultPaymentMethodRequest,
 } from '@/types/member';
 import {
   PaymentHistoryApiResponse,
@@ -187,6 +188,17 @@ const deletePaymentMethod = async ({ paymentMethodId }: DeletePaymentMethodReque
   );
 };
 
+/** 대표 결제 수단 변경 */
+const changeDefaultPaymentMethod = async ({ paymentMethodId }: ChangeDefaultPaymentMethodRequest) => {
+  await axiosInstance.patch<ChangeDefaultPaymentMethodRequest, AxiosResponse<ApiResponse>>(
+    END_POINTS.MEMBERS.PAYMENT_METHOD,
+    null,
+    {
+      params: { paymentMethodId },
+    },
+  );
+};
+
 export const memberApi = {
   getUserSummary,
   getUserDashboard,
@@ -211,4 +223,5 @@ export const memberApi = {
   cancelSubscription,
   getPaymentMethod,
   deletePaymentMethod,
+  changeDefaultPaymentMethod,
 };
