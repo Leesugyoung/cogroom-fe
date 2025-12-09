@@ -12,11 +12,12 @@ export default function NavList() {
 
   return (
     <S.NavList>
-      {HEADER_NAV_ITEMS.map(({ label, href }) => (
+      {HEADER_NAV_ITEMS.map(({ label, color, href }) => (
         <NavItem
           key={href}
           label={label}
           href={href}
+          color={color}
           isActive={pathname.startsWith(href)}
         />
       ))}

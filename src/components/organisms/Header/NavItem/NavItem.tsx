@@ -11,7 +11,7 @@ interface NavItemProps extends NavItemStyleProps {
   href: string;
 }
 
-export default function NavItem({ label, href, isActive }: NavItemProps) {
+export default function NavItem({ label, href, color, isActive }: NavItemProps) {
   const isUnknown = useAuthStore((s) => s.isUnknown());
 
   if (isUnknown) {
@@ -25,7 +25,10 @@ export default function NavItem({ label, href, isActive }: NavItemProps) {
   }
 
   return (
-    <S.NavItem isActive={isActive}>
+    <S.NavItem
+      color={color}
+      isActive={isActive}
+    >
       <Link href={href}>{label}</Link>
     </S.NavItem>
   );

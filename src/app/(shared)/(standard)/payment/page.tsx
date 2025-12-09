@@ -3,10 +3,11 @@
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
+import ArrowTurnDownRight from '@/assets/icons/arrowturndownright.svg';
+import KakaoPay from '@/assets/icons/kakaopay.svg';
 import Checkbox from '@/components/atoms/Checkbox/Checkbox';
 import OutlinedButton from '@/components/atoms/OutlinedButton/OutlinedButton';
 import SolidButton from '@/components/atoms/SolidButton/SolidButton';
-import SolidTag from '@/components/atoms/SolidTag/SolidTag';
 import AuthGuard from '@/components/organisms/AuthGuard/AuthGuard';
 import { PLAN_MAPPING } from '@/constants/common';
 import useGetUserSummary from '@/hooks/api/member/useGetUserSummary';
@@ -287,6 +288,7 @@ export default function Payment() {
       </S.PaymentCardWrapper>
 
       <S.PaymentInfo>
+        <S.CheckPaymentText>결제 정보 확인</S.CheckPaymentText>
         {getPlanActionType() === 'PAYMENT' && (
           <S.PaymentSummary>
             <S.PaymentDetail>
@@ -298,11 +300,13 @@ export default function Payment() {
               <S.DiscountInfo>
                 <S.InfoText>할인 적용</S.InfoText>
                 <S.InfoWrapper>
-                  <SolidTag
-                    color='blue'
-                    label='기본 적용 할인'
-                    round
-                  />
+                  <S.TagWrapper>
+                    <S.ArrowIcon>
+                      <ArrowTurnDownRight />
+                    </S.ArrowIcon>
+                    <S.InfoTag>기본 적용 할인</S.InfoTag>
+                  </S.TagWrapper>
+
                   <S.DiscountPrice>-{planInfo?.baseDiscountAmount?.toLocaleString('ko-KR') ?? 0} KRW</S.DiscountPrice>
                 </S.InfoWrapper>
               </S.DiscountInfo>
@@ -321,11 +325,13 @@ export default function Payment() {
                 </S.InfoWrapper>
                 {couponApplyResult.isApplied && (
                   <S.InfoWrapper>
-                    <SolidTag
-                      color='blue'
-                      label={couponApplyResult.couponName}
-                      round
-                    />
+                    <S.TagWrapper>
+                      <S.ArrowIcon>
+                        <ArrowTurnDownRight />
+                      </S.ArrowIcon>
+                      <S.InfoTag>{couponApplyResult.couponName}</S.InfoTag>
+                    </S.TagWrapper>
+
                     <S.DiscountPrice>
                       {`-${couponApplyResult.couponDiscount.toLocaleString('ko-KR')} KRW`}
                     </S.DiscountPrice>
@@ -355,6 +361,9 @@ export default function Payment() {
                     interactionVariant='normal'
                     round
                   />
+                  <S.KakaoPayIcon>
+                    <KakaoPay />
+                  </S.KakaoPayIcon>
                   <S.PaymentMethodLabel>카카오페이</S.PaymentMethodLabel>
                 </S.PaymentMethodRow>
               </S.PaymentMethod>

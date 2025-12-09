@@ -1,16 +1,31 @@
 'use client';
 
-import { css } from '@emotion/react';
+import { css, SerializedStyles } from '@emotion/react';
 import styled from '@emotion/styled';
+
+import { Theme } from '@/styles/theme';
+
+export type NavItemColor = 'blue' | 'black';
 
 export interface NavItemStyleProps {
   isActive: boolean;
+  color?: NavItemColor;
 }
+
+const colorStyles: Record<NavItemColor, (theme: Theme) => SerializedStyles> = {
+  blue: (theme) => css`
+    color: ${theme.semantic.primary.normal};
+  `,
+  black: (theme) => css`
+    color: ${theme.semantic.label.normal};
+  `,
+};
 
 export const NavItem = styled.li<NavItemStyleProps>`
   a {
     ${({ theme }) => theme.typography.body2.regular};
-    color: ${({ theme }) => theme.semantic.label.normal};
+
+    ${({ theme, color = 'black' }) => colorStyles[color](theme)}
 
     ${({ theme, isActive }) =>
       isActive &&

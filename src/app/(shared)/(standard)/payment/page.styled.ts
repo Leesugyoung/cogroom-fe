@@ -35,6 +35,13 @@ export const InfoWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  height: 4.2rem;
+`;
+
+export const CheckPaymentText = styled.p`
+  ${({ theme }) => theme.typography.display2.medium};
+  color: ${({ theme }) => theme.cogroom.black};
 `;
 
 export const InfoText = styled.p`
@@ -58,6 +65,26 @@ export const DiscountInfo = styled.div`
   gap: 0.8rem;
 `;
 
+export const TagWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+`;
+
+export const ArrowIcon = styled.div`
+  width: 1.8rem;
+  height: 1.8rem;
+  color: ${({ theme }) => theme.semantic.label.alternative};
+`;
+
+export const InfoTag = styled.div`
+  padding: 0.8rem 0.9rem;
+  border-radius: 1.2rem;
+  ${({ theme }) => theme.typography.label1.semibold};
+  background-color: ${({ theme }) => theme.semantic.background.elevated.normal};
+  color: ${({ theme }) => theme.semantic.primary.normal};
+`;
+
 export const CouponInfo = styled.div`
   display: flex;
   flex-direction: column;
@@ -79,6 +106,14 @@ export const PaymentMethodRow = styled.div`
   display: flex;
   align-items: center;
   gap: 0.8rem;
+`;
+
+export const KakaoPayIcon = styled.div`
+  width: 4.1rem;
+  height: 2rem;
+  padding: 0.618rem 0.81rem;
+  border-radius: 999px;
+  background-color: ${({ theme }) => theme.brandColors.kakao};
 `;
 
 export const PaymentMethodLabel = styled.p`
