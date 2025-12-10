@@ -27,11 +27,12 @@ export default function Footer() {
 
         <S.InfoWrapper>
           <S.Info>
-            상호명: 온코그니어 Oncognier <span> | </span> 대표: 김다희 <span> | </span> 사업자등록번호: 663-01-03713
+            상호명: (주)온코그니어 <span> | </span> 대표: 김다희 <span> | </span> 사업자등록번호: 638-81-03854
             <span> | </span> 통신판매업 신고 번호: 2025-수원권선-0559
           </S.Info>
           <S.Info>
-            주소: 경기 수원시 권선구 매실로 47-14, 16400, 4층 <span> | </span> 문의: oncognier@gmail.com, 010-3739-3430
+            주소: 경기도 화성시 효행로 1068, 604동 G149호, 18405, 604동 G149호 <span> | </span> 문의:
+            oncognier@gmail.com, 010-3739-3430
           </S.Info>
           <S.Info>Copyright © 2025 온코그니어 All Rights Reserved</S.Info>
         </S.InfoWrapper>
