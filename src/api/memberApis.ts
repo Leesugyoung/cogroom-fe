@@ -2,7 +2,7 @@ import { AxiosResponse } from 'axios';
 
 import { END_POINTS } from '@/constants/api';
 import { ApiResponse, AxiosMeta } from '@/types/api';
-import { ApplyCouponRequest, RegisterCouponResponse } from '@/types/coupon';
+import { ApplyCouponRequest, GetCouponListParams, RegisterCouponResponse } from '@/types/coupon';
 import {
   CheckNicknameRequest,
   CheckNicknameResponse,
@@ -133,8 +133,8 @@ const getUserSubscription = async () => {
 };
 
 /** 쿠폰 목록 조회 */
-const getCouponList = async () => {
-  const { data } = await axiosInstance.get(END_POINTS.MEMBERS.COUPON);
+const getCouponList = async (params?: GetCouponListParams) => {
+  const { data } = await axiosInstance.get(END_POINTS.PAYMENTS.COUPONS, { params });
   return data.result;
 };
 

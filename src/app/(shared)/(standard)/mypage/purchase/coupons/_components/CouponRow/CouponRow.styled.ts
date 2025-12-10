@@ -29,6 +29,7 @@ export const CouponCell = styled.div<{
   ${({ width }) => (width ? `width: ${width};` : '100%')}
   align-items: center;
   justify-content: center;
+  text-align: center;
 
   &:not(:last-child) {
     margin-right: 0.8rem;

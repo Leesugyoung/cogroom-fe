@@ -237,6 +237,15 @@ export const COUPON_TABLE_HEADER_ITEMS: TableHeaderItem[] = [
   { label: '수정', mode: 'expand', align: 'center' },
 ] as const;
 
+export const MYPAGE_COUPON_TABLE_HEADER_ITEM: TableHeaderItem[] = [
+  { label: '상태', width: '8rem', align: 'center', mode: 'fix' },
+  { label: '쿠폰명', width: '12rem', align: 'center', mode: 'fix' },
+  { label: '가격', width: '12rem', align: 'center', mode: 'fix' },
+  { label: '쿠폰 코드', width: '13rem', align: 'center', mode: 'fix' },
+  { label: '사용 기한', width: '14rem', align: 'center', mode: 'fix' },
+  { label: '쿠폰 상태', width: '12rem', align: 'center', mode: 'fix' },
+] as const;
+
 /* ---------- 회원가입/탈퇴 스텝 ---------- */
 export const SIGNUP_STEP = {
   CHECK_ORIGINAL_EMAIL: 'CHECK_ORIGINAL_EMAIL',

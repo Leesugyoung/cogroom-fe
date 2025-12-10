@@ -3,7 +3,7 @@ import React from 'react';
 
 import OutlinedButton from '@/components/atoms/OutlinedButton/OutlinedButton';
 import { DEFAULT_COUPON_TICKET, DEFAULT_LOGO_SYMBOL_WHITE } from '@/constants/image';
-import useApplyCoupon from '@/hooks/api/member/useApplyCoupon';
+import { useApplyCoupon } from '@/hooks/api/member/useApplyCoupon';
 import { useLargeModalStore } from '@/stores/useModalStore2';
 import { ModalOptions } from '@/types/modal2';
 
@@ -20,11 +20,17 @@ export interface ApplyCouponModalProps extends ModalOptions {
 
 export default function ApplyCoupon({ price, name, expiredDate, couponHistoryId }: ApplyCouponModalProps) {
   const { close } = useLargeModalStore();
-  const { applyCoupon } = useApplyCoupon();
+  const { applyCouponToSubscription } = useApplyCoupon();
 
   const handleApply = () => {
-    applyCoupon({ couponHistoryId });
-    close();
+    applyCouponToSubscription(
+      { couponHistoryId },
+      {
+        onSuccess: () => {
+          close();
+        },
+      },
+    );
   };
 
   return (

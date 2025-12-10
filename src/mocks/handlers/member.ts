@@ -264,6 +264,36 @@ export const memberHandlers = [
 
     return new HttpResponse(
       JSON.stringify({
+        isSuccess: true,
+        code: 'SUCCESS',
+        message: '대표 결제 수단이 변경되었습니다.',
+      }),
+      {
+        status: HTTP_STATUS_CODE.OK,
+      },
+    );
+  }),
+
+  // 정기구독에 쿠폰 적용
+  http.post(END_POINTS.MEMBERS.APPLY_COUPON, async ({ request }) => {
+    const url = new URL(request.url);
+    const couponHistoryId = url.searchParams.get('couponHistoryId');
+
+    // if (!couponHistoryId) {
+    //   return new HttpResponse(
+    //     JSON.stringify({
+    //       isSuccess: false,
+    //       code: 'COUPON_NOT_FOUND',
+    //       message: '발급받은 쿠폰이 없습니다.',
+    //     }),
+    //     {
+    //       status: HTTP_STATUS_CODE.BAD_REQUEST,
+    //     },
+    //   );
+    // }
+
+    return new HttpResponse(
+      JSON.stringify({
         code: 'SUCCESS',
         message: '요청에 성공했습니다.',
       }),

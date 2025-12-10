@@ -1,47 +1,99 @@
 export const getCouponListSuccess = {
   code: 'SUCCESS',
-  message: '쿠폰 목록 조회에 성공했습니다.',
+  message: '요청에 성공했습니다.',
   result: {
-    coupons: [
+    data: [
       {
-        id: 1, // 쿠폰 고유 ID
-        name: '첫 구독 할인쿠폰', // 쿠폰명
-        code: '1-2-3-4-5-6-7-8', // 쿠폰 코드 (대시 형식)
-        discountType: 'AMOUNT', // 할인 타입 (정액 할인)
-        discountValue: 5000, // 할인 값 (5,000원)
-        minOrderAmount: 0, // 최소 주문 금액
-        maxDiscountAmount: null, // 최대 할인 금액 (정액 할인은 null)
-        expiresAt: '2024-12-31T23:59:00Z', // 사용기한
-        usedAt: null, // 사용 일시 (사용 전엔 null)
-        isUsed: false, // 쿠폰 상태 (미사용)
+        couponId: 1,
+        couponName: '친구 초대 쿠폰',
+        couponType: 'TRIAL',
+        discountType: 'AMOUNT',
+        discountValue: 5000.0,
+        couponHistoryId: 1,
+        couponCode: '9-9-9-9-9-9-9-9',
+        endDate: '2025-12-26 22:45:11',
+        status: 'ACTIVE',
       },
       {
-        id: 2,
-        name: '친구 초대 할인', // 쿠폰명
-        code: '9-9-9-9-9-9-9-9', // 쿠폰 코드 (대시 형식)
-        discountType: 'AMOUNT', // 할인 타입 (정액 할인)
-        discountValue: 5000, // 할인 값 (5,000원)
-        minOrderAmount: 30000, // 최소 주문 금액 (30,000원 이상)
-        maxDiscountAmount: null, // 최대 할인 금액 (정액 할인은 null)
-        expiresAt: '2025-01-15T14:30:00Z', // 사용기한
-        usedAt: null, // 사용 일시 (미사용)
-        isUsed: false, // 쿠폰 상태 (미사용)
+        couponId: 2,
+        couponName: '파트너 할인 쿠폰',
+        couponType: 'PARTNER',
+        discountType: 'AMOUNT',
+        discountValue: 5000.0,
+        couponHistoryId: 2,
+        couponCode: 'PARTNER-2024-001',
+        endDate: '2025-12-31 23:59:59',
+        status: 'ACTIVE',
+      },
+      {
+        couponId: 3,
+        couponName: '연간 구독 할인',
+        couponType: 'PARTNER',
+        discountType: 'PERCENT',
+        discountValue: 20.0,
+        couponHistoryId: 3,
+        couponCode: 'YEARLY-TRIAL-2024',
+        endDate: '2025-11-30 23:59:59',
+        status: 'ACTIVE',
+      },
+      {
+        couponId: 3,
+        couponName: '연간 구독 할인',
+        couponType: 'PARTNER',
+        discountType: 'PERCENT',
+        discountValue: 20.0,
+        couponHistoryId: 3,
+        couponCode: 'YEARLY-TRIAL-2024',
+        endDate: '2025-11-30 23:59:59',
+        status: 'ACTIVE',
+      },
+      {
+        couponId: 3,
+        couponName: '연간 구독 할인',
+        couponType: 'PARTNER',
+        discountType: 'PERCENT',
+        discountValue: 20.0,
+        couponHistoryId: 3,
+        couponCode: 'YEARLY-TRIAL-2024',
+        endDate: '2025-11-30 23:59:59',
+        status: 'ACTIVE',
+      },
+      {
+        couponId: 3,
+        couponName: '연간 구독 할인',
+        couponType: 'PARTNER',
+        discountType: 'PERCENT',
+        discountValue: 20.0,
+        couponHistoryId: 3,
+        couponCode: 'YEARLY-TRIAL-2024',
+        endDate: '2025-11-30 23:59:59',
+        status: 'ACTIVE',
+      },
+      {
+        couponId: 3,
+        couponName: '연간 구독 할인',
+        couponType: 'PARTNER',
+        discountType: 'PERCENT',
+        discountValue: 20.0,
+        couponHistoryId: 3,
+        couponCode: 'YEARLY-TRIAL-2024',
+        endDate: '2025-11-30 23:59:59',
+        status: 'ACTIVE',
+      },
+      {
+        couponId: 3,
+        couponName: '연간 구독 할인',
+        couponType: 'PARTNER',
+        discountType: 'PERCENT',
+        discountValue: 20.0,
+        couponHistoryId: 3,
+        couponCode: 'YEARLY-TRIAL-2024',
+        endDate: '2025-11-30 23:59:59',
+        status: 'ACTIVE',
       },
     ],
-    totalCount: 2, // 총 쿠폰 개수
+    nextCursor: 20,
+    last: false,
+    totalElements: 123,
   },
-};
-
-export const getCouponListEmpty = {
-  code: 'SUCCESS',
-  message: '쿠폰 목록 조회에 성공했습니다.',
-  result: {
-    coupons: [],
-    totalCount: 0,
-  },
-};
-
-export const getCouponListError = {
-  code: 'UNAUTHORIZED',
-  message: '인증이 필요합니다.',
 };

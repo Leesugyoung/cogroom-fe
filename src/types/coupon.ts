@@ -1,4 +1,4 @@
-import { ApiResponse, PaginationResult } from './api';
+import { ApiResponse, CursorPaginationResultWithLast } from './api';
 
 export interface RegisterCouponRequest {
   code: string;
@@ -10,21 +10,25 @@ export interface ApplyCouponRequest {
   couponHistoryId: number;
 }
 
+export interface GetCouponListParams {
+  cursor?: number;
+  size?: number;
+}
+
 export interface Coupon {
-  id: number;
-  name: string;
-  code: string;
-  discountType: 'PERCENTAGE' | 'AMOUNT';
+  couponId: number;
+  couponName: string;
+  couponType: 'TRIAL' | 'PARTNER';
+  discountType: 'PERCENT' | 'AMOUNT';
   discountValue: number;
-  minOrderAmount: number;
-  maxDiscountAmount: number | null;
-  expiresAt: string;
-  usedAt: string | null;
-  isUsed: boolean;
+  couponHistoryId: number;
+  couponCode: string;
+  endDate: string;
+  status: 'ACTIVE';
 }
 
 export interface CouponListResponse extends ApiResponse {
-  result: PaginationResult<Coupon>;
+  result: CursorPaginationResultWithLast<Coupon>;
 }
 
 export type CouponErrorCode =

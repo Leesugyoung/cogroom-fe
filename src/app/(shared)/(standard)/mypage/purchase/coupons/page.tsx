@@ -10,9 +10,9 @@ import NumberPagination from '@/components/molecules/NumberPagination/NumberPagi
 import EmptyState from '@/components/organisms/EmptyState/EmptyState';
 import Loading from '@/components/organisms/Loading/Loading';
 import Table from '@/components/organisms/Table/Table';
+import { MYPAGE_COUPON_TABLE_HEADER_ITEM } from '@/constants/common';
 import useGetCouponList from '@/hooks/api/member/useGetCouponList';
 import useRegisterCoupon from '@/hooks/api/member/useRegisterCoupon';
-import { TableHeaderItem } from '@/types/common';
 import { Coupon } from '@/types/coupon';
 
 import CouponRow from './_components/CouponRow/CouponRow';
@@ -20,6 +20,8 @@ import * as S from './page.styled';
 
 export default function Coupons() {
   const [currentPage, setCurrentPage] = useState(0);
+  const [cursorHistory, setCursorHistory] = useState<(number | undefined)[]>([undefined]);
+  const pageSize = 5;
 
   const methods = useForm({
     mode: 'onSubmit',
@@ -34,23 +36,29 @@ export default function Coupons() {
   } = methods;
 
   const { registerCoupon, isLoading, isSuccess } = useRegisterCoupon();
-  const { data: couponData, isLoading: isCouponLoading } = useGetCouponList();
-
-  const headerItems: TableHeaderItem[] = [
-    { label: '상태', width: '8rem', align: 'center', mode: 'fix' },
-    { label: '쿠폰명', width: '12rem', align: 'center', mode: 'fix' },
-    { label: '가격', width: '12rem', align: 'center', mode: 'fix' },
-    { label: '쿠폰 코드', width: '13rem', align: 'center', mode: 'fix' },
-    { label: '사용 기한', width: '14rem', align: 'center', mode: 'fix' },
-    { label: '쿠폰 상태', width: '12rem', align: 'center', mode: 'fix' },
-  ];
+  const { data: couponData, isLoading: isCouponLoading } = useGetCouponList({
+    cursor: cursorHistory[currentPage],
+    size: pageSize,
+  });
 
   const nonDataHeaderItems = [{ label: '쿠폰 목록', align: 'center' as const, mode: 'fix' as const }];
 
-  const totalPages = Math.max(1, Math.ceil((couponData?.totalCount || 0) / 10));
+  const totalPages = Math.max(1, Math.ceil((couponData?.totalElements || 0) / pageSize));
 
   const handlePageChange = (uiPageOneBased: number) => {
-    setCurrentPage(uiPageOneBased - 1);
+    const newPage = uiPageOneBased - 1;
+
+    if (newPage > currentPage) {
+      if (couponData?.nextCursor && !cursorHistory[newPage]) {
+        setCursorHistory((prev) => {
+          const newHistory = [...prev];
+          newHistory[newPage] = couponData.nextCursor ?? undefined;
+          return newHistory;
+        });
+      }
+    }
+
+    setCurrentPage(newPage);
   };
 
   const onSubmit = (data: { coupon: string }) => {
@@ -88,9 +96,11 @@ export default function Coupons() {
       </FormProvider>
 
       <Table
-        headerItems={!couponData?.coupons || couponData.coupons.length === 0 ? nonDataHeaderItems : headerItems}
+        headerItems={
+          !couponData?.data || couponData.data.length === 0 ? nonDataHeaderItems : MYPAGE_COUPON_TABLE_HEADER_ITEM
+        }
         showSelection={false}
-        isEmpty={!couponData?.coupons || couponData.coupons.length === 0}
+        isEmpty={!couponData?.data || couponData.data.length === 0}
         emptyState={
           <EmptyState
             icon={<Message />}
@@ -98,9 +108,9 @@ export default function Coupons() {
           />
         }
       >
-        {couponData?.coupons?.map((coupon: Coupon) => (
+        {couponData?.data?.map((coupon: Coupon) => (
           <CouponRow
-            key={coupon.id}
+            key={coupon.couponId}
             coupon={coupon}
           />
         ))}

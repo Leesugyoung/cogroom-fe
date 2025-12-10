@@ -19,6 +19,13 @@ export interface CursorPaginationResult<T> {
   totalElements?: number;
 }
 
+export interface CursorPaginationResultWithLast<T> {
+  data: T[];
+  nextCursor: number | null;
+  last: boolean;
+  totalElements: number;
+}
+
 export interface AxiosMeta {
   prefetch?: boolean;
 }

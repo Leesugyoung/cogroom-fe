@@ -40,7 +40,9 @@ const colorStyles: Record<OutlinedTagColor, (theme: Theme) => SerializedStyles> 
   `,
 };
 
-export const OutlinedTag = styled.span<OutlinedTagStyleProps>`
+export const OutlinedTag = styled.span<
+  OutlinedTagStyleProps & { onClick?: (e: React.MouseEvent<HTMLSpanElement>) => void }
+>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -53,4 +55,10 @@ export const OutlinedTag = styled.span<OutlinedTagStyleProps>`
   ${({ theme, color }) => colorStyles[color](theme)};
   ${({ theme }) => theme.typography.label2.regular};
   background-color: ${({ theme }) => theme.semantic.background.normal.normal};
+
+  ${({ onClick }) =>
+    onClick &&
+    css`
+      cursor: pointer;
+    `}
 `;
