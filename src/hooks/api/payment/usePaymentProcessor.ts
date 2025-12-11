@@ -97,7 +97,7 @@ export const usePaymentProcessor = () => {
           return;
         }
 
-        await handleNewPayment(paymentHistoryId, paymentMethod);
+        await handleNewPayment(paymentHistoryId, paymentMethod, identityRes.identityVerificationId);
         return;
       } else {
         // 본인 인증이 필요 없는 경우, 바로 신규 결제 흐름 시작
