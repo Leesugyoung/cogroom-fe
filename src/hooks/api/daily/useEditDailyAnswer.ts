@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { HTTPError } from '@/api/axios/errors/HTTPError';
 import { dailyApi } from '@/api/dailyApis';
-import { DAILY_QUERY_KEYS } from '@/constants/queryKeys';
+import { DAILY_QUERY_KEYS, MEMBER_QUERY_KEYS } from '@/constants/queryKeys';
 import { useAlertModalStore } from '@/stores/useModalStore';
 
 export const useEditDailyAnswerMutation = () => {
@@ -16,6 +16,7 @@ export const useEditDailyAnswerMutation = () => {
     onSuccess: () => {
       open('alert', { message: '수정되었습니다.' });
       queryClient.invalidateQueries({ queryKey: [...DAILY_QUERY_KEYS.DAILY_QUESTION_ANSWER] });
+      queryClient.invalidateQueries({ queryKey: [...MEMBER_QUERY_KEYS.MEMBER_DAILY] });
     },
     onError: (error: HTTPError) => {
       switch (error.code) {

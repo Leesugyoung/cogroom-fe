@@ -24,6 +24,7 @@ const POST_ERROR_MESSAGES: Record<string, string> = {
   POST_NOT_FOUND_ERROR: '존재하지 않는 게시물입니다',
   POST_HIDDEN_ERROR: '숨김 처리된 게시물입니다',
   GUEST_ACCESS_FORBIDDEN_ERROR: '회원만 열람할 수 있는 게시물입니다. 로그인 후 이용해 주세요.',
+  ACCESS_FORBIDDEN_ERROR: '무료 플랜 구독자는 접근 불가능한 카테고리 입니다.',
 };
 
 export default function PostPage() {
@@ -42,14 +43,28 @@ export default function PostPage() {
     const postErrorMessage = POST_ERROR_MESSAGES[error.code];
 
     if (postErrorMessage) {
-      const isForbidden = error.code === 'GUEST_ACCESS_FORBIDDEN_ERROR';
+      const isForbidden = error.code === 'GUEST_ACCESS_FORBIDDEN_ERROR' || error.code === 'ACCESS_FORBIDDEN_ERROR';
 
       return (
         <EmptyState
           description={postErrorMessage}
           icon={<MessageCircleX />}
-          buttonLabel={isForbidden ? '로그인 하러 가기' : '다른 글 보기'}
-          buttonAction={() => (isForbidden ? open('login') : router.push('/community'))}
+          buttonLabel={
+            isForbidden
+              ? error.code === 'GUEST_ACCESS_FORBIDDEN_ERROR'
+                ? '로그인 하러 가기'
+                : '구독 플랜 보러 가기'
+              : '다른 글 보기'
+          }
+          buttonAction={() => {
+            if (error.code === 'GUEST_ACCESS_FORBIDDEN_ERROR') {
+              open('login');
+            } else if (error.code === 'ACCESS_FORBIDDEN_ERROR') {
+              router.push('/subscription');
+            } else {
+              router.push('/community');
+            }
+          }}
         />
       );
     }

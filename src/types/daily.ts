@@ -1,5 +1,10 @@
 import { ApiResponse } from '@/types/api';
 
+export interface DailyQuestionRequest {
+  assignedQuestionId?: number;
+  answerDate?: string;
+}
+
 export interface DailyQuestionResponse extends ApiResponse {
   result: {
     questionId: number;

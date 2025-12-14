@@ -3,11 +3,22 @@ import type { AxiosResponse } from 'axios';
 import { axiosInstance } from '@/api/axios/axiosInstance';
 import { END_POINTS } from '@/constants/api';
 import { ApiResponse, AxiosMeta } from '@/types/api';
-import { DailyAnswerRequest, DailyHasAnsweredResponse, DailyQuestionResponse } from '@/types/daily';
+import {
+  DailyAnswerRequest,
+  DailyHasAnsweredResponse,
+  DailyQuestionRequest,
+  DailyQuestionResponse,
+} from '@/types/daily';
 
 /** 데일리 질문 조회 */
-const getDailyQuestions = async (meta?: AxiosMeta) => {
-  const { data } = await axiosInstance.get<DailyQuestionResponse>(END_POINTS.DAILY.QUESTIONS, { meta });
+const getDailyQuestions = async (meta?: AxiosMeta, request?: DailyQuestionRequest) => {
+  const { assignedQuestionId, answerDate } = request || {};
+
+  const { data } = await axiosInstance.get<DailyQuestionResponse>(END_POINTS.DAILY.QUESTIONS, {
+    meta,
+    params: { assignedQuestionId, answerDate },
+  });
+
   return data.result;
 };
 

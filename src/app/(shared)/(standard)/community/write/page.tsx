@@ -25,6 +25,8 @@ export default function CommunityWrite() {
   const { getSearchParam } = useUrlSearchParams();
   const type = getSearchParam('type') || 'post';
   const isDaily = type === 'daily';
+  const dailyQuestionId = getSearchParam('id');
+  const answerDate = getSearchParam('answerDate');
 
   const editMode = useEditMode({
     reset: () => {},
@@ -50,6 +52,8 @@ export default function CommunityWrite() {
     existingPost: editMode.existingPost,
     setValue: form.setValue,
     updateUrlType: category.updateUrlType,
+    dailyQuestionId: dailyQuestionId,
+    answerDate: answerDate,
   });
 
   const editModeWithUpdate = useEditMode({

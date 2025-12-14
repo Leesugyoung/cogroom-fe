@@ -277,7 +277,7 @@ export const PLAN_ID_TO_NAME: Record<number, string> = {
 } as const;
 
 /* ---------- UI/기능 관련 ---------- */
-export const WEEK_DAYS = ['월', '화', '수', '목', '금', '토', '일'] as const;
+export const WEEK_DAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
 export const PAGINATION_VISIBLE_RANGE = 5;
 export const DAILY_MAX_LENGTH = 200;
 

@@ -47,6 +47,9 @@ export type UserDaily = {
   question: string;
   answer: string;
   assignedDate: string;
+  answerDate: string;
+  questionId: number;
+  updatable: boolean;
 };
 
 export interface UserDailyResponse extends ApiResponse {

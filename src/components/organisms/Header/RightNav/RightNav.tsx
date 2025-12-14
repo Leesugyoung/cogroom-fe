@@ -29,12 +29,12 @@ export default function RightNav() {
   const setUnauthenticated = useAuthStore((s) => s.setUnauthenticated);
 
   useEffect(() => {
-    if (isSuccess && data?.memberRole) {
-      setAuthenticated(data.memberRole);
+    if (isSuccess && data?.memberRole && data?.planId !== undefined && data?.planId !== null) {
+      setAuthenticated(data.memberRole, data.planId);
     } else if (isError) {
       setUnauthenticated();
     }
-  }, [isSuccess, isError, data?.memberRole, role, setAuthenticated, setUnauthenticated]);
+  }, [isSuccess, isError, data?.memberRole, data?.planId, role, setAuthenticated, setUnauthenticated]);
 
   const roleLabel = role !== null ? ROLE_LABELS[role] : undefined;
 

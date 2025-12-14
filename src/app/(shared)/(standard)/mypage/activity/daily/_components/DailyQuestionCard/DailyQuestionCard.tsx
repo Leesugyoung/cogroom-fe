@@ -1,36 +1,62 @@
 'use client';
 
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useState, useCallback } from 'react';
 
 import ChevronDown from '@/assets/icons/chevrondown.svg';
 import ChevronUp from '@/assets/icons/chevronup.svg';
 import OutlinedButton from '@/components/atoms/OutlinedButton/OutlinedButton';
 import Textarea from '@/components/molecules/Textarea/Textarea';
+import { useEditDailyAnswerMutation } from '@/hooks/api/daily/useEditDailyAnswer';
+import { useAuthStore } from '@/stores/useAuthStore';
 import { formatDayAsSlashMMDD, formatWeekday } from '@/utils/date/formatDay';
 
 import * as S from './DailyQuestionCard.styled';
 
 interface DailyQuestionCardProps {
+  questionId: number;
   question: string;
   answer: string;
-  assignedDate: string;
+  answerDate: string;
   initialOpen?: boolean;
+  updatable?: boolean;
 }
 
 export default function DailyQuestionCard({
+  questionId,
   question,
   answer,
-  assignedDate,
+  answerDate,
   initialOpen = false,
+  updatable,
 }: DailyQuestionCardProps) {
+  const router = useRouter();
+  const isFree = useAuthStore((s) => s.isFree);
+
   const [isOpen, setIsOpen] = useState(initialOpen);
+  const [editedAnswer, setEditedAnswer] = useState(answer);
 
-  const toggleOpen = () => {
+  const { editDailyAnswer } = useEditDailyAnswerMutation();
+
+  const toggleOpen = useCallback(() => {
     setIsOpen((prev) => !prev);
-  };
+  }, []);
 
-  const formattedDate = formatDayAsSlashMMDD(assignedDate);
-  const weekday = formatWeekday(assignedDate);
+  const handleEditAnswer = useCallback(() => {
+    if (!updatable) return;
+
+    editDailyAnswer({ assignedQuestionId: questionId, answer: editedAnswer });
+  }, [updatable, editDailyAnswer, questionId, editedAnswer]);
+
+  const handleShare = useCallback(() => {
+    const shareUrl = `/community/write?type=daily&id=${questionId}&answerDate=${answerDate}`;
+    router.push(shareUrl);
+  }, [router, questionId, answerDate]);
+
+  const formattedDate = formatDayAsSlashMMDD(answerDate);
+  const weekday = formatWeekday(answerDate);
+
+  const canShare = !isFree();
 
   return (
     <S.DailyQuestionCard>
@@ -53,14 +79,42 @@ export default function DailyQuestionCard({
           />
         </S.StyledOutlinedButton>
         {isOpen && (
-          <Textarea
-            textareaSize='md'
-            placeholder={answer}
-            minHeight='15.5rem'
-            disabled
-            autoResize
-            style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
-          />
+          <S.EditWrapper>
+            <Textarea
+              textareaSize='md'
+              value={updatable ? editedAnswer : ''}
+              onChange={(e) => setEditedAnswer(e.target.value)}
+              placeholder={answer}
+              minHeight='15.5rem'
+              disabled={!updatable}
+              autoResize
+              style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
+            />
+            {(updatable || canShare) && (
+              <S.ButtonWrapper>
+                {updatable && (
+                  <OutlinedButton
+                    size='sm'
+                    color='primary'
+                    label='수정하기'
+                    interactionVariant='normal'
+                    onClick={handleEditAnswer}
+                    fillContainer
+                  />
+                )}
+                {canShare && (
+                  <OutlinedButton
+                    size='sm'
+                    color='assistive'
+                    label='공유하기'
+                    interactionVariant='normal'
+                    onClick={handleShare}
+                    fillContainer
+                  />
+                )}
+              </S.ButtonWrapper>
+            )}
+          </S.EditWrapper>
         )}
       </S.QuestionAnswerGroup>
     </S.DailyQuestionCard>

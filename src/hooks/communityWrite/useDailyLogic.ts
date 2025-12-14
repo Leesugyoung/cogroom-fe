@@ -33,6 +33,8 @@ export interface UseDailyLogicProps {
   existingPost?: ExistingPost;
   setValue: UseFormSetValue<CommunityWriteFormData>;
   updateUrlType: (type: 'post' | 'daily') => void;
+  dailyQuestionId?: string | null;
+  answerDate?: string | null;
 }
 
 export interface UseDailyLogicReturn {
@@ -52,9 +54,12 @@ export const useDailyLogic = ({
   existingPost,
   setValue,
   updateUrlType,
+  dailyQuestionId,
+  answerDate,
 }: UseDailyLogicProps): UseDailyLogicReturn => {
   const router = useRouter();
-  const { data: dailyData, isLoading: isDailyLoading } = useGetDailyQuestionsQuery();
+  const questionId = dailyQuestionId ? Number(dailyQuestionId) : undefined;
+  const { data: dailyData, isLoading: isDailyLoading } = useGetDailyQuestionsQuery(questionId, answerDate ?? undefined);
   const { open: openAlert } = useAlertModalStore();
 
   const showDailyAlert = () => {

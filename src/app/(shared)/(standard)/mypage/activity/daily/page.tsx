@@ -16,13 +16,15 @@ export default function Daily() {
 
   return (
     <S.DailyContainer>
-      {data.map(({ question, answer, assignedDate }, index) => (
+      {data.map(({ questionId, question, answer, answerDate, updatable }, index) => (
         <DailyQuestionCard
-          key={assignedDate}
+          key={questionId}
+          questionId={questionId}
           question={question}
           answer={answer}
-          assignedDate={assignedDate}
+          answerDate={answerDate}
           initialOpen={index === 0}
+          updatable={updatable}
         />
       ))}
     </S.DailyContainer>

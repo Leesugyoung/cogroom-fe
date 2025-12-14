@@ -47,3 +47,18 @@ export const StyledOutlinedButton = styled.div<{ $isOpen: boolean }>`
     }
   }
 `;
+
+export const EditWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+
+  width: 100%;
+`;
+
+export const ButtonWrapper = styled.div`
+  display: flex;
+  gap: 1.2rem;
+
+  width: 100%;
+`;

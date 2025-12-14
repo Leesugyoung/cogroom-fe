@@ -17,6 +17,7 @@ import { useLikePost } from '@/hooks/api/post/useLikePost';
 import { useSavePost } from '@/hooks/api/post/useSavePost';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useAppModalStore } from '@/stores/useModalStore';
+import { useMediumModalStore } from '@/stores/useModalStore2';
 import { formatRelativeKorean } from '@/utils/date/formatDay';
 import { formatCountPlus } from '@/utils/formatText';
 
@@ -27,7 +28,10 @@ import { PostCardProps } from '../PostCard';
 export default function PostCardMobile({ post, isEdit = false, isSelected = false, onToggleSelect }: PostCardProps) {
   const { open: openAppModal } = useAppModalStore();
   const isAuth = useAuthStore((s) => s.isAuth());
+  const isFree = useAuthStore((s) => s.isFree());
+
   const router = useRouter();
+  const { open: mediumStoreOpen, close: mediumStoreClose } = useMediumModalStore();
 
   const {
     postId,
@@ -53,11 +57,31 @@ export default function PostCardMobile({ post, isEdit = false, isSelected = fals
   const { savePost } = useSavePost();
 
   const handleCardClick = () => {
-    if (category.name === POST_CATEGORY_LABELS.REFLECTION || isAuth) {
-      router.push(`/community/post/${postId}`);
+    if (
+      !isAuth &&
+      (category.name === POST_CATEGORY_LABELS.DAILY_SHARE || category.name === POST_CATEGORY_LABELS.COLUMN)
+    ) {
+      openAppModal('login');
       return;
     }
-    openAppModal('login');
+
+    if (category.name === POST_CATEGORY_LABELS.COLUMN && isFree) {
+      mediumStoreOpen('alert', {
+        title: '유료 구독 플랜이 필요해요',
+        description: '이 카테고리는 유료 구독자에게만 공개됩니다.',
+        buttonColor: 'primary',
+        button: {
+          label: '구독 플랜 보러가기',
+          onClick: () => {
+            mediumStoreClose();
+            router.push('/subscription');
+          },
+        },
+      });
+      return;
+    }
+
+    router.push(`/community/post/${postId}`);
   };
 
   const onToggleLike = () => {

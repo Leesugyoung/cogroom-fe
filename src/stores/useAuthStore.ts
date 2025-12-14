@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 
+import { PLAN_MAPPING } from '@/constants/common';
 import type { MemberRole } from '@/types/member';
 
 export type AuthStatus = 'unknown' | 'authenticated' | 'unauthenticated';
@@ -7,6 +8,7 @@ export type AuthStatus = 'unknown' | 'authenticated' | 'unauthenticated';
 interface AuthState {
   status: AuthStatus;
   role: MemberRole | null;
+  planId: number | null;
 
   isUnknown: () => boolean;
   isUnauth: () => boolean;
@@ -14,7 +16,11 @@ interface AuthState {
   isAdmin: () => boolean;
   isContentProvider: () => boolean;
 
-  setAuthenticated: (role: MemberRole) => void;
+  isMonthly: () => boolean;
+  isYearly: () => boolean;
+  isFree: () => boolean;
+
+  setAuthenticated: (role: MemberRole, planId: number) => void;
   setUnauthenticated: () => void;
   reset: () => void;
 }
@@ -22,6 +28,7 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set, get) => ({
   status: 'unknown',
   role: null,
+  planId: null,
 
   isAuth: () => get().status === 'authenticated',
   isUnauth: () => get().status === 'unauthenticated',
@@ -29,7 +36,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   isAdmin: () => get().role === 'ADMIN',
   isContentProvider: () => get().role === 'CONTENT_PROVIDER',
 
-  setAuthenticated: (role) => set({ status: 'authenticated', role }),
-  setUnauthenticated: () => set({ status: 'unauthenticated', role: null }),
-  reset: () => set({ status: 'unknown', role: null }),
+  isMonthly: () => get().planId === PLAN_MAPPING.MONTH,
+  isYearly: () => get().planId === PLAN_MAPPING.YEAR,
+  isFree: () => get().planId === PLAN_MAPPING.FREE,
+
+  setAuthenticated: (role, planId) => set({ status: 'authenticated', role, planId }),
+  setUnauthenticated: () => set({ status: 'unauthenticated', role: null, planId: null }),
+  reset: () => set({ status: 'unknown', role: null, planId: null }),
 }));

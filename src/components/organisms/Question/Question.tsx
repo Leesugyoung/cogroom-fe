@@ -83,6 +83,26 @@ export default function Question({
     handleInput();
   }, [answerValue]);
 
+  const getDailyMaxLength = (): number => {
+    const isFree = useAuthStore.getState().isFree;
+    const isMonthly = useAuthStore.getState().isMonthly;
+    const isYearly = useAuthStore.getState().isYearly;
+
+    if (isYearly()) {
+      return 1000;
+    }
+
+    if (isMonthly()) {
+      return 400;
+    }
+
+    if (isFree()) {
+      return 200;
+    }
+
+    return 200;
+  };
+
   return (
     <S.QuestionCard>
       <S.BackgroundImage
@@ -118,7 +138,7 @@ export default function Question({
         <S.SubmitGroup>
           {!readOnlyMode && (
             <InputCount
-              maxLength={DAILY_MAX_LENGTH}
+              maxLength={getDailyMaxLength()}
               value={answerValue}
               onChange={setAnswerValue}
             />

@@ -1,20 +1,15 @@
 import Image from 'next/image';
 
 import { DEFAULT_WATERDROP } from '@/constants/image';
-import { formatDayAsDashYYYYMMDD } from '@/utils/date/formatDay';
 
 import * as S from './DataCell.styled';
 
 interface DateCellProps {
-  dateData: string;
-  streakDateList: string[];
+  date: string;
+  isAnswered: boolean;
 }
 
-export default function DateCell({ dateData, streakDateList }: DateCellProps) {
-  const date = new Date(dateData);
-  const streakSet = new Set(streakDateList.map((date) => formatDayAsDashYYYYMMDD(date)));
-  const isAnswered = streakSet.has(dateData);
-
+export default function DateCell({ date, isAnswered }: DateCellProps) {
   return (
     <S.DateCell isAnswered={isAnswered}>
       {isAnswered ? (
@@ -25,7 +20,7 @@ export default function DateCell({ dateData, streakDateList }: DateCellProps) {
           height={16}
         />
       ) : (
-        date.getDate()
+        date
       )}
     </S.DateCell>
   );

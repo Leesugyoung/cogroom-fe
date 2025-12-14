@@ -50,8 +50,9 @@ export default function Daily() {
           hasAnswered={hasAnsweredData?.hasAnswered ?? false}
         />
         <Calendar
-          streakDateList={streakCalendarData?.result.streakDateList ?? []}
+          streakData={streakCalendarData?.streakByMonth ?? []}
           hasAnswered={hasAnsweredData?.hasAnswered ?? false}
+          startMonth='2025-11'
         />
       </S.DailyContainer>
       <OutlinedButton

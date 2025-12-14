@@ -78,9 +78,13 @@ export const BreadcrumbChevron = styled.div`
   width: 16px;
   height: 16px;
   cursor: pointer;
+`;
 
-  svg {
-    width: 100%;
-    height: 100%;
-  }
+export const MonthArrow = styled.button<{ disabled: boolean }>`
+  display: flex;
+  align-items: center;
+
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
 `;
