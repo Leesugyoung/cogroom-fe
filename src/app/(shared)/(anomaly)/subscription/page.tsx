@@ -16,6 +16,7 @@ import useGetUserSummary from '@/hooks/api/member/useGetUserSummary';
 import { useGetPlans } from '@/hooks/api/payment/useGetPlans';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useAppModalStore } from '@/stores/useModalStore';
+import { LineBreakTablet } from '@/styles/helpers/lineBreak';
 
 import SubscriptionCard from './_components/SubscriptionCard/SubscriptionCard';
 import * as S from './page.styled';
@@ -103,28 +104,42 @@ export default function Subscription() {
           <S.Feature>
             <S.FeatureText>
               <S.Title>스트릭 부활권</S.Title>
-              <S.Description>실수해도 데일리 스트릭을 잃지 않아요!</S.Description>
+              <S.Description>
+                실수해도
+                <LineBreakTablet /> 데일리 스트릭을 잃지 않아요!
+              </S.Description>
             </S.FeatureText>
             <Thumbnail
               src={DEFAULT_FEATURE_BANNER_1}
               ratio='16_9'
+              radius
             />
           </S.Feature>
           <S.Feature>
             <S.FeatureText>
               <S.Title>답변 수 100자 → 500자</S.Title>
-              <S.Description>길이에 구애받지 않고 마음껏 생각을 이어가 보세요</S.Description>
+              <S.Description>
+                길이에 구애받지 않고
+                <LineBreakTablet /> 마음껏 생각을 이어가 보세요
+              </S.Description>
             </S.FeatureText>
             <Thumbnail
               src={DEFAULT_FEATURE_BANNER_2}
               ratio='16_9'
+              radius
             />
           </S.Feature>
           <S.Feature>
             <S.FeatureText>
               <S.Title>무한 수정 & 무한 공유</S.Title>
-              <S.Description>지난 데일리 사유를 돌아보고 수정할 수 있어요</S.Description>
-              <S.Description>자유롭게 커뮤니티에 어제, 오늘, 지난날의 인사이트 공유해요</S.Description>
+              <S.Description>
+                지난 데일리 사유를 돌아보고
+                <LineBreakTablet /> 수정할 수 있어요
+              </S.Description>
+              <S.Description>
+                자유롭게 커뮤니티에 어제, 오늘,
+                <LineBreakTablet /> 지난날의 인사이트 공유해요
+              </S.Description>
             </S.FeatureText>
             <Thumbnail
               src={DEFAULT_FEATURE_BANNER_3}
@@ -157,12 +172,13 @@ export default function Subscription() {
             />
             시작!
           </S.FreeTrialText>
-          <Image
-            src={DEFAULT_UPGRADE_BANNER}
-            alt='업그레이드 안내 배너'
-            width={868}
-            height={944}
-          />
+          <S.ImageWrapper>
+            <Image
+              src={DEFAULT_UPGRADE_BANNER}
+              alt='업그레이드 안내 배너'
+              fill
+            />
+          </S.ImageWrapper>
         </S.UpgradeSection>
       </S.SectionContainer>
     </S.Subscription>

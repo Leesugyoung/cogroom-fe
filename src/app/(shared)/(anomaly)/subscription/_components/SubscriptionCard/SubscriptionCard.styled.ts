@@ -2,6 +2,8 @@
 
 import styled from '@emotion/styled';
 
+import { mqMax } from '@/styles/foundation';
+
 export const SubscriptionCard = styled.div<{ $hasBestBadge?: boolean }>`
   display: flex;
   flex-direction: column;
@@ -32,6 +34,10 @@ export const CardContainer = styled.div<{ $isChecked?: boolean }>`
   border: 1px solid rgba(117, 154, 217, 0.6);
   border-radius: 2.4rem;
   background-color: #fbfdff;
+
+  ${mqMax.desktop} {
+    gap: 2rem;
+  }
 `;
 
 export const PlanCardHeader = styled.div`
@@ -60,6 +66,10 @@ export const PriceInfoWrapper = styled.div<{ $hasDiscount?: boolean }>`
   flex-direction: column;
 
   padding-top: ${({ $hasDiscount }) => ($hasDiscount ? '0' : '2.6rem')};
+
+  ${mqMax.desktop} {
+    align-items: flex-end;
+  }
 `;
 
 export const DiscountInfo = styled.p`
@@ -75,11 +85,20 @@ export const FinalPrice = styled.div`
   display: flex;
   align-items: flex-end;
   gap: 1.2rem;
+
+  ${mqMax.desktop} {
+    flex-direction: column;
+    gap: 0;
+  }
 `;
 
 export const Price = styled.p`
   ${({ theme }) => theme.typography.display1.medium};
   color: ${({ theme }) => theme.cogroom.black};
+
+  ${mqMax.desktop} {
+    ${({ theme }) => theme.typography.title1.medium};
+  }
 `;
 
 export const Currency = styled.p`
