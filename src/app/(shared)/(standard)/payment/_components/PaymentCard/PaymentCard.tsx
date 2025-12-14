@@ -5,6 +5,8 @@ import { useState } from 'react';
 import ChevronDown from '@/assets/icons/chevrondown-bold.svg';
 import ChevronUp from '@/assets/icons/chevronup-bold.svg';
 import Checkbox from '@/components/atoms/Checkbox/Checkbox';
+import OutlinedButton from '@/components/atoms/OutlinedButton/OutlinedButton';
+import { PLAN_ID_TO_NAME } from '@/constants/common';
 import { parsePlanDescription } from '@/utils/formatText';
 
 import * as S from './PaymentCard.styled';
@@ -22,7 +24,15 @@ export interface PaymentCardProps {
   isFreeTrial?: boolean;
 }
 
-const BASE_DESCRIPTIONS = ['연간 정기구독', '데일리, 커뮤니티 특별 혜택', '추후 포인트 적립 가점'];
+const BASE_DESCRIPTIONS: Record<string, string[]> = {
+  MONTH: ['월간 정기구독', '데일리, 커뮤니티 특별 혜택', '추후 포인트 적립 가점'],
+  YEAR: [
+    '연간 정기구독',
+    '모든 월간 구독 혜택 포함',
+    '데일리, 커뮤니티 특별 혜택 + 추가혜택',
+    '추후 포인트 적립 가점 ++',
+  ],
+};
 
 export default function PaymentCard({
   id,
@@ -49,8 +59,8 @@ export default function PaymentCard({
     setIsExpanded((prev) => !prev);
   };
 
-  const parsedDescription = [...BASE_DESCRIPTIONS, ...parsePlanDescription(description)];
-  const visibleDescriptions = isExpanded ? parsedDescription : BASE_DESCRIPTIONS;
+  const parsedDescription = [...BASE_DESCRIPTIONS[PLAN_ID_TO_NAME[id]], ...parsePlanDescription(description)];
+  const visibleDescriptions = isExpanded ? parsedDescription : BASE_DESCRIPTIONS[PLAN_ID_TO_NAME[id]];
 
   return (
     <S.PaymentCard $hasFreeBadge={isFreeTrial}>
@@ -98,13 +108,24 @@ export default function PaymentCard({
               })}
             </S.PlanDescriptionList>
 
-            <S.ShowMoreButton
+            <S.ShowMoreButtonDesktop
               type='button'
               onClick={handleToggle}
             >
               {isExpanded ? '접기' : '자세히 보기'}
               <S.ChevronIcon>{isExpanded ? <ChevronUp /> : <ChevronDown />}</S.ChevronIcon>
-            </S.ShowMoreButton>
+            </S.ShowMoreButtonDesktop>
+
+            <S.ShowMoreButtonMobile onClick={handleToggle}>
+              <OutlinedButton
+                size='sm'
+                label='더보기'
+                color='primary'
+                iconRight={isExpanded ? <ChevronUp /> : <ChevronDown />}
+                interactionVariant='normal'
+                fillContainer
+              />
+            </S.ShowMoreButtonMobile>
           </S.PlanDescription>
         </S.PlanCardContent>
       </S.CardContainer>

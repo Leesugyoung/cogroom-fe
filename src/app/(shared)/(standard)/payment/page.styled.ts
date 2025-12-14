@@ -2,27 +2,49 @@
 
 import styled from '@emotion/styled';
 
+import { mqMax } from '@/styles/foundation';
+
 export const Payment = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 8rem;
 `;
 
 export const PaymentCardWrapper = styled.div`
   display: flex;
   gap: 3.2rem;
+
+  width: 100%;
+
+  ${mqMax.desktop} {
+    flex-direction: column;
+    gap: 1.6rem;
+
+    max-width: 53rem;
+  }
 `;
 
 export const PaymentInfo = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4rem;
+
+  width: 100%;
+
+  ${mqMax.desktop} {
+    gap: 1.6rem;
+  }
 `;
 
 export const PaymentSummary = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2.4rem;
+
+  ${mqMax.desktop} {
+    gap: 2rem;
+  }
 `;
 
 export const PaymentDetail = styled.div`
@@ -42,21 +64,37 @@ export const InfoWrapper = styled.div`
 export const CheckPaymentText = styled.p`
   ${({ theme }) => theme.typography.display2.medium};
   color: ${({ theme }) => theme.cogroom.black};
+
+  ${mqMax.desktop} {
+    ${({ theme }) => theme.typography.heading2.semibold};
+  }
 `;
 
 export const InfoText = styled.p`
   ${({ theme }) => theme.typography.heading2.medium};
   color: ${({ theme }) => theme.palette.neutral[30]};
+
+  ${mqMax.desktop} {
+    ${({ theme }) => theme.typography.body1.regular};
+  }
 `;
 
 export const PlanPrice = styled.p`
   ${({ theme }) => theme.typography.heading2.medium};
   color: ${({ theme }) => theme.cogroom.black};
+
+  ${mqMax.desktop} {
+    ${({ theme }) => theme.typography.body1.semibold};
+  }
 `;
 
 export const DiscountPrice = styled.p`
   ${({ theme }) => theme.typography.heading2.medium};
   color: ${({ theme }) => theme.semantic.status.destructive};
+
+  ${mqMax.desktop} {
+    ${({ theme }) => theme.typography.body1.semibold};
+  }
 `;
 
 export const DiscountInfo = styled.div`
@@ -100,6 +138,10 @@ export const PaymentMethod = styled.div`
 export const PaymentMethodTitle = styled.p`
   ${({ theme }) => theme.typography.heading2.medium};
   color: ${({ theme }) => theme.palette.neutral[30]};
+
+  ${mqMax.desktop} {
+    ${({ theme }) => theme.typography.body1.regular};
+  }
 `;
 
 export const PaymentMethodRow = styled.div`
@@ -119,13 +161,10 @@ export const KakaoPayIcon = styled.div`
 export const PaymentMethodLabel = styled.p`
   ${({ theme }) => theme.typography.headline1.medium};
   color: ${({ theme }) => theme.semantic.label.normal};
-`;
 
-export const Divider = styled.div`
-  width: 100%;
-  height: 1px;
-  background-color: rgba(117, 154, 217, 0.6);
-  border-radius: 999px;
+  ${mqMax.desktop} {
+    ${({ theme }) => theme.typography.body1.semibold};
+  }
 `;
 
 export const PaymentResult = styled.div`
@@ -137,6 +176,10 @@ export const PaymentResult = styled.div`
 export const ResultText = styled.p`
   ${({ theme }) => theme.typography.title2.medium};
   color: ${({ theme }) => theme.cogroom.black};
+
+  ${mqMax.desktop} {
+    ${({ theme }) => theme.typography.heading2.semibold};
+  }
 `;
 
 export const AgreementSection = styled.div`
@@ -154,6 +197,10 @@ export const AgreementRow = styled.div`
 export const AgreementLabel = styled.p`
   ${({ theme }) => theme.typography.body2.medium};
   color: ${({ theme }) => theme.palette.neutral[50]};
+
+  ${mqMax.desktop} {
+    ${({ theme }) => theme.typography.label1.regular};
+  }
 `;
 
 export const AgreementLink = styled.a`
@@ -161,9 +208,51 @@ export const AgreementLink = styled.a`
   color: ${({ theme }) => theme.palette.neutral[50]};
 
   text-decoration: underline;
+
+  ${mqMax.desktop} {
+    ${({ theme }) => theme.typography.label1.regular};
+  }
 `;
 
 export const AgreementError = styled.p`
   ${({ theme }) => theme.typography.body2.medium};
   color: ${({ theme }) => theme.semantic.status.destructive};
+`;
+
+export const DividerDesktop = styled.div`
+  width: 100%;
+  height: 1px;
+  background-color: rgba(117, 154, 217, 0.6);
+  border-radius: 999px;
+
+  ${mqMax.desktop} {
+    display: none;
+  }
+`;
+
+export const DividerMobileThin = styled.div`
+  display: none;
+
+  width: 100%;
+  height: 1px;
+  background-color: ${({ theme }) => theme.semantic.static.black};
+  opacity: 0.6;
+  border-radius: 999px;
+
+  ${mqMax.desktop} {
+    display: block;
+  }
+`;
+
+export const DividerMobileThick = styled.div`
+  display: none;
+
+  width: 100%;
+  height: 2px;
+  background-color: ${({ theme }) => theme.semantic.static.black};
+  border-radius: 999px;
+
+  ${mqMax.desktop} {
+    display: block;
+  }
 `;

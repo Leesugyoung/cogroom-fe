@@ -289,6 +289,9 @@ export default function Payment() {
 
       <S.PaymentInfo>
         <S.CheckPaymentText>결제 정보 확인</S.CheckPaymentText>
+
+        <S.DividerMobileThick />
+
         {getPlanActionType() === 'PAYMENT' && (
           <S.PaymentSummary>
             <S.PaymentDetail>
@@ -296,6 +299,8 @@ export default function Payment() {
                 <S.InfoText>코그룸 프리미엄 구독</S.InfoText>
                 <S.PlanPrice>{planInfo?.basePrice?.toLocaleString('ko-KR') ?? '-'} KRW</S.PlanPrice>
               </S.InfoWrapper>
+
+              <S.DividerMobileThin />
 
               <S.DiscountInfo>
                 <S.InfoText>할인 적용</S.InfoText>
@@ -369,7 +374,8 @@ export default function Payment() {
               </S.PaymentMethod>
             </S.PaymentDetail>
 
-            <S.Divider />
+            <S.DividerDesktop />
+            <S.DividerMobileThick />
 
             <S.PaymentResult>
               <S.InfoWrapper>
