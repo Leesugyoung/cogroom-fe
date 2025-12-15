@@ -60,6 +60,7 @@ const ADMIN_QUERY_KEYS = {
   POST_LIST: ['admin', 'post_list'],
   COMMENT_LIST: ['admin', 'comment_list'],
   PAYMENT_HISTORY: ['admin', 'payment_history'],
+  ADMIN_COUPON_LIST: ['admin', 'coupon_list'],
 } as const;
 
 export {

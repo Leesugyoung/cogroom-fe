@@ -22,6 +22,7 @@ interface SelectProps extends SelectStyleProps {
   error?: string;
   label?: string;
   required?: boolean;
+  disabled?: boolean;
 }
 
 export function Select({
@@ -35,6 +36,7 @@ export function Select({
   error,
   label,
   required = false,
+  disabled = false,
 }: SelectProps) {
   const { isOpen, toggle, handleBlur, dropdownRef } = useDropdown();
 
@@ -46,11 +48,13 @@ export function Select({
   const selectedLabels = allOptions.filter((opt) => value.includes(opt.value)).map((opt) => opt.label);
 
   const handleSelect = (next: Array<string | number>) => {
+    if (disabled) return;
     onChange(next);
     if (!isMulti) toggle();
   };
 
   const handleRemove = (val: string | number) => {
+    if (disabled) return;
     onChange(value.filter((v) => v !== val));
   };
 
@@ -71,7 +75,8 @@ export function Select({
         <S.InputContainer
           isOpen={isOpen}
           isError={!!error}
-          onClick={toggle}
+          disabled={disabled}
+          onClick={disabled ? undefined : toggle}
         >
           {isMulti && (
             <SelectTagList
@@ -85,6 +90,7 @@ export function Select({
             <S.TriggerInput
               type='text'
               inputSize={inputSize}
+              disabled={disabled}
               value={isMulti ? '' : selectedLabels[0]?.toString() || ''}
               placeholder={value.length === 0 ? placeholder : ''}
               readOnly
@@ -94,12 +100,13 @@ export function Select({
           <S.IconWrapper
             isOpen={isOpen}
             isError={!!error}
+            disabled={disabled}
           >
             <ChevronDown />
           </S.IconWrapper>
         </S.InputContainer>
 
-        {isOpen && (
+        {isOpen && !disabled && (
           <S.DropdownPanel role='listbox'>
             <FilterDropdownList
               options={options}

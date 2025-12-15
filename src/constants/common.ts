@@ -40,7 +40,6 @@ export const PAYMENT_TAB_ROUTES = {
 } as const;
 
 export const COUPON_TYPE_OPTIONS: SelectOption[] = [
-  { value: 'ALL', label: '전체' },
   { value: 'TRIAL', label: '체험형' },
   { value: 'PARTNER', label: '제휴형' },
 ];
@@ -69,6 +68,24 @@ export const COUPON_STATUS_OPTIONS = [
   { value: 'DONE', label: '발급종료' },
   { value: 'PAUSE', label: '일시정지' },
 ] as const;
+
+export const COUPON_DISCOUNT_TYPE_OPTIONS: SelectOption[] = [
+  { label: '%', value: 'PERCENT' },
+  { label: '원', value: 'AMOUNT' },
+];
+
+export const COUPON_USAGE_SCOPE_OPTIONS: SelectOption[] = [
+  { label: '월간 프리미엄', value: 1 },
+  { label: '연간 프리미엄', value: 2 },
+];
+
+export const COUPON_TARGETS_OPTIONS: SelectOption[] = [
+  { label: '전체', value: 'ALL' },
+  { label: '무료플랜', value: 'FREE_PLAN' },
+  { label: '월간 프리미엄', value: 'MONTHLY_PREMIUM' },
+  { label: '연간 프리미엄', value: 'YEARLY_PREMIUM' },
+  { label: '수동발급', value: 'NONE' },
+];
 
 /* ---------- 메타 데이터 ---------- */
 export const CATEGORY_LABELS = {

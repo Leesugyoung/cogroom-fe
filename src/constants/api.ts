@@ -216,6 +216,8 @@ export const END_POINTS = {
     COUPONS: {
       /** 쿠폰 리스트 조회 (GET) */
       LIST: `${BASE_PATH_V1.ADMIN}/coupons`,
+      /** 쿠폰 등록 (POST) */
+      REGIST: `${BASE_PATH_V1.ADMIN}/coupons/regist`,
     },
 
     PAYMENTS: {

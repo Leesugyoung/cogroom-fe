@@ -107,7 +107,7 @@ export interface CouponListRequest {
   startDate?: string;
   endDate?: string;
   status: Set<string>;
-  cursor?: number;
+  cursor?: number | null;
   size?: number;
   sort?: string;
 }
@@ -122,6 +122,10 @@ export interface Coupon {
   endedDate: string;
   issuedCount: number;
   status: string;
+  couponTargets?: string[];
+  couponCode?: string;
+  discountValue?: number;
+  discountType?: string;
 }
 
 export interface CouponListResponse {
@@ -173,4 +177,25 @@ export interface AdminPaymentHistoryResponse {
     last: boolean;
     totalElements: number;
   };
+}
+
+export interface CreateCouponRequest {
+  couponName: string;
+  couponCode: string;
+  couponType: string;
+  discountValue: number;
+  discountType: string;
+  applicablePlan: number;
+  couponTargets: string[];
+  maxIssuedCount: number;
+  startDate: string | null;
+  endDate: string | null;
+}
+
+export interface UpdateCouponRequest {
+  couponName: string;
+  maxIssuedCount: number;
+  startDate: string;
+  endDate: string;
+  couponId: number;
 }

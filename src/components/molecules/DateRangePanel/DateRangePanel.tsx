@@ -88,6 +88,7 @@ export default function DateRangePanel({
           <S.QuickDateSelectLabel>빠른 선택</S.QuickDateSelectLabel>
           {QUICK_DATE_SELECT.map((item) => (
             <S.QuickDateSelectItem
+              type='button'
               key={item.value}
               onClick={() => handleQuickSelect(item.value)}
             >

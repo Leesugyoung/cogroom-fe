@@ -94,6 +94,8 @@ export default function Coupons() {
     return new Set(selectedStatusOptions);
   }, [selectedStatusOptions]);
 
+  const cursorValue = (currentPage - 1) * itemsPerPage;
+
   const {
     data: couponsData,
     isLoading,
@@ -101,7 +103,7 @@ export default function Coupons() {
   } = useGetCoupons({
     status: apiStatus,
     size: itemsPerPage,
-    cursor: (currentPage - 1) * itemsPerPage,
+    cursor: cursorValue === 0 ? null : cursorValue,
     sort: sort === 'latest' ? 'latest' : 'oldest',
     keyword: searchFilters.keyword,
     couponTypes: new Set(searchFilters.couponTypes),

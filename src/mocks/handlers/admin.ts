@@ -1,9 +1,16 @@
 import { http, HttpResponse } from 'msw';
 
 import { END_POINTS, HTTP_STATUS_CODE } from '@/constants/api';
-import { CreateDailyQuestionsRequest, DeleteMemberRequest } from '@/types/admin';
+import { CreateDailyQuestionsRequest, DeleteMemberRequest, CreateCouponRequest } from '@/types/admin';
 
 import { changeMemberRoleSuccess } from '../data/admin/changeMemberRoleData';
+import {
+  createCouponSuccess,
+  createCouponCodeDuplicateError,
+  createCouponInvalidDiscountValueError,
+  createCouponInvalidDateRangeError,
+  createCouponInvalidTargetPlanError,
+} from '../data/admin/createCouponData';
 import { createDailyQuestionsError, createDailyQuestionsSuccess } from '../data/admin/createDailyQuestionsData';
 import { deleteMemberError, deleteMemberSuccess } from '../data/admin/deleteMemberData';
 import { getAdminCommentListSuccess } from '../data/admin/getAdminCommentListData';
@@ -16,6 +23,7 @@ import {
   getMemberDailyQuestionsSuccess,
 } from '../data/admin/getMemberDailyQuestionsData';
 import { getMemberListSuccess } from '../data/admin/getMemberListData';
+import { updateCouponSuccess } from '../data/admin/updateCouponData';
 
 export const adminHandlers = [
   // 회원 목록 조회
@@ -200,6 +208,55 @@ export const adminHandlers = [
     };
 
     return new HttpResponse(JSON.stringify(response), {
+      status: HTTP_STATUS_CODE.OK,
+    });
+  }),
+
+  // 쿠폰 등록
+  http.post(END_POINTS.ADMIN.COUPONS.REGIST, async ({ request }) => {
+    const body = (await request.json()) as CreateCouponRequest;
+
+    // 중복 쿠폰 코드 체크 (기존에 있는 코드들과 비교)
+    const existingCodes = ['TRIAL10', 'NEWBIE5', 'YEARLY50K', 'PARTNER10', 'NEWBIE5_2'];
+    if (existingCodes.includes(body.couponCode)) {
+      return new HttpResponse(JSON.stringify(createCouponCodeDuplicateError), {
+        status: HTTP_STATUS_CODE.BAD_REQUEST,
+      });
+    }
+
+    // 할인 값 검증
+    if (!body.discountValue || body.discountValue <= 0) {
+      return new HttpResponse(JSON.stringify(createCouponInvalidDiscountValueError), {
+        status: HTTP_STATUS_CODE.BAD_REQUEST,
+      });
+    }
+
+    // 날짜 범위 검증
+    if (body.startDate && body.endDate) {
+      const startDate = new Date(body.startDate);
+      const endDate = new Date(body.endDate);
+      if (endDate <= startDate) {
+        return new HttpResponse(JSON.stringify(createCouponInvalidDateRangeError), {
+          status: HTTP_STATUS_CODE.BAD_REQUEST,
+        });
+      }
+    }
+
+    // 발급 수량 검증
+    if (!body.maxIssuedCount || body.maxIssuedCount <= 0) {
+      return new HttpResponse(JSON.stringify(createCouponInvalidTargetPlanError), {
+        status: HTTP_STATUS_CODE.BAD_REQUEST,
+      });
+    }
+
+    return new HttpResponse(JSON.stringify(createCouponSuccess), {
+      status: HTTP_STATUS_CODE.OK,
+    });
+  }),
+
+  // 쿠폰 수정
+  http.patch(END_POINTS.ADMIN.COUPONS.LIST, async () => {
+    return new HttpResponse(JSON.stringify(updateCouponSuccess), {
       status: HTTP_STATUS_CODE.OK,
     });
   }),

@@ -29,3 +29,16 @@ export interface MemberDailyFormFields {
 export interface WithdrawFormFields {
   reason: string;
 }
+
+export interface CouponFormFields {
+  couponName: string;
+  couponCode: string;
+  couponType: string;
+  discountValue: string;
+  discountType: string;
+  applicablePlan: (string | number)[];
+  couponTargets: (string | number)[];
+  maxIssuedCount: string;
+  startDate: Date | null;
+  endDate: Date | null;
+}

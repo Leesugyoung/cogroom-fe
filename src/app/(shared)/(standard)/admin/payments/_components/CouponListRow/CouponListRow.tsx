@@ -1,5 +1,7 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+
 import Checkbox from '@/components/atoms/Checkbox/Checkbox';
 import OutlinedButton from '@/components/atoms/OutlinedButton/OutlinedButton';
 import { Coupon } from '@/types/admin';
@@ -14,6 +16,7 @@ interface CouponListRowProps {
 }
 
 export default function CouponListRow({ coupon, checked, onCheckToggle }: CouponListRowProps) {
+  const router = useRouter();
   const getPlanLabel = (planId: number) => {
     switch (planId) {
       case 1:
@@ -47,6 +50,24 @@ export default function CouponListRow({ coupon, checked, onCheckToggle }: Coupon
       default:
         return type;
     }
+  };
+
+  const handleEditClick = () => {
+    const editData = {
+      ...coupon,
+      maxIssuedCount: coupon.issuedCount,
+      startDate: coupon.createdAt,
+      endDate: coupon.endedDate,
+    };
+
+    const searchParams = new URLSearchParams();
+    Object.entries(editData).forEach(([key, value]) => {
+      if (value !== null && value !== undefined) {
+        searchParams.append(key, String(value));
+      }
+    });
+
+    router.push(`/admin/payments/coupons/create?${searchParams.toString()}`);
   };
 
   return (
@@ -105,6 +126,7 @@ export default function CouponListRow({ coupon, checked, onCheckToggle }: Coupon
           label={'수정'}
           color='assistive'
           interactionVariant='normal'
+          onClick={handleEditClick}
         />
       </S.Cell>
     </S.Row>

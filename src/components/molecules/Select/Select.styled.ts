@@ -9,6 +9,7 @@ export interface SelectStyleProps {
   isError?: boolean;
   isOpen?: boolean;
   inputSize?: SelectSize;
+  disabled?: boolean;
 }
 
 const sizeStyles: Record<SelectSize, (theme: Theme) => SerializedStyles> = {
@@ -50,7 +51,9 @@ export const InputContainer = styled.div<SelectStyleProps>`
           ? theme.semantic.primary.normal
           : theme.semantic.label.assistive};
 
-  cursor: pointer;
+  background-color: ${({ theme, disabled }) => (disabled ? theme.semantic.fill.normal : theme.semantic.static.white)};
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 `;
 
 export const TriggerInput = styled.input<SelectStyleProps>`
@@ -59,8 +62,8 @@ export const TriggerInput = styled.input<SelectStyleProps>`
   background: transparent;
 
   ${({ theme, inputSize = 'md' }) => sizeStyles[inputSize](theme)};
-  color: ${({ theme }) => theme.semantic.label.normal};
-  cursor: pointer;
+  color: ${({ theme, disabled }) => (disabled ? theme.semantic.label.assistive : theme.semantic.label.normal)};
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 
   &::placeholder {
     ${({ theme, inputSize = 'md' }) => sizeStyles[inputSize](theme)};
@@ -82,12 +85,14 @@ export const IconWrapper = styled.div<SelectStyleProps>`
   transform: translateY(-50%);
   z-index: 1;
 
-  color: ${({ theme, isError, isOpen }) =>
-    isError
-      ? theme.semantic.status.destructive
-      : isOpen
-        ? theme.semantic.primary.normal
-        : theme.semantic.label.alternative};
+  color: ${({ theme, isError, isOpen, disabled }) =>
+    disabled
+      ? theme.semantic.label.assistive
+      : isError
+        ? theme.semantic.status.destructive
+        : isOpen
+          ? theme.semantic.primary.normal
+          : theme.semantic.label.alternative};
 `;
 
 export const DropdownPanel = styled.div`
