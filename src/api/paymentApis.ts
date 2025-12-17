@@ -3,8 +3,9 @@ import { AxiosResponse } from 'axios';
 import { END_POINTS } from '@/constants/api';
 import { ApiResponse } from '@/types/api';
 import {
+  AppliedCouponRequest,
+  AppliedCouponResponse,
   ApplyCouponRequest,
-  ApplyCouponResponse,
   BillingKeyResponse,
   ChangePlanRequest,
   CompletePlanRequest,
@@ -36,6 +37,15 @@ const getPlans = async () => {
 /** 빌링키 조회 — 신규 결제자 / 플랜 업데이트 대상 확인용 */
 const getBillingKey = async () => {
   const { data } = await axiosInstance.get<BillingKeyResponse>(END_POINTS.PAYMENTS.BILLING_KEY);
+
+  return data.result;
+};
+
+/** 적용된 쿠폰 조회 */
+const getAppliedCoupon = async ({ paymentHistoryId }: AppliedCouponRequest) => {
+  const { data } = await axiosInstance.get<AppliedCouponResponse>(END_POINTS.PAYMENTS.COUPON, {
+    params: { paymentHistoryId },
+  });
 
   return data.result;
 };
@@ -80,20 +90,30 @@ const verifyPayment = async ({ identityVerificationId, paymentHistoryId }: Verif
 
 /** 쿠폰 적용 */
 const applyCoupon = async ({ paymentHistoryId, couponHistoryId }: ApplyCouponRequest) => {
-  const urlWithQuery = `${END_POINTS.PAYMENTS.APPLY_COUPON(paymentHistoryId)}?couponHistoryId=${couponHistoryId}`;
+  const urlWithQuery = `${END_POINTS.PAYMENTS.PAYMENT_COUPONS(paymentHistoryId)}?couponHistoryId=${couponHistoryId}`;
+  const { data } = await axiosInstance.post<ApplyCouponRequest, AxiosResponse<ApiResponse>>(urlWithQuery, {});
 
-  const { data } = await axiosInstance.post<ApplyCouponRequest, AxiosResponse<ApplyCouponResponse>>(urlWithQuery, {});
+  return data;
+};
 
-  return data.result;
+/** 쿠폰 취소 */
+const cancelCoupon = async ({ paymentHistoryId, couponHistoryId }: ApplyCouponRequest) => {
+  const urlWithQuery = `${END_POINTS.PAYMENTS.PAYMENT_COUPONS(paymentHistoryId)}?couponHistoryId=${couponHistoryId}`;
+
+  const { data } = await axiosInstance.post<ApplyCouponRequest, AxiosResponse<ApiResponse>>(urlWithQuery, {});
+
+  return data;
 };
 
 export const paymentApi = {
   getPlanInfo,
   getPlans,
   getBillingKey,
+  getAppliedCoupon,
   getCoupons,
   completePlan,
   changePlan,
   verifyPayment,
   applyCoupon,
+  cancelCoupon,
 };

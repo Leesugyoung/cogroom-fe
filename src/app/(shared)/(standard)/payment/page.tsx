@@ -11,6 +11,7 @@ import SolidButton from '@/components/atoms/SolidButton/SolidButton';
 import AuthGuard from '@/components/organisms/AuthGuard/AuthGuard';
 import { PLAN_MAPPING } from '@/constants/common';
 import useGetUserSummary from '@/hooks/api/member/useGetUserSummary';
+import { useGetAppliedCoupon } from '@/hooks/api/payment/useGetAppliedCoupon';
 import { useGetBillingKey } from '@/hooks/api/payment/useGetBillingKey';
 import { useGetPlanInfo } from '@/hooks/api/payment/useGetPlanInfo';
 import { useGetPlans } from '@/hooks/api/payment/useGetPlans';
@@ -19,27 +20,11 @@ import { usePaymentResume } from '@/hooks/api/payment/usePaymentResume';
 import { loadPaymentState } from '@/stores/paymentStorage';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useLargeModalStore } from '@/stores/useModalStore2';
-import { PaymentMethod, ApplyCouponResponse } from '@/types/payment';
+import { PaymentMethod } from '@/types/payment';
 import { checkPaymentMethods } from '@/utils/portone';
 
 import PaymentCard from './_components/PaymentCard/PaymentCard';
 import * as S from './page.styled';
-
-interface CouponResult {
-  isApplied: boolean;
-  couponName: string;
-  couponDiscount: number;
-  finalPrice: number | null;
-}
-
-const INITIAL_COUPON_RESULT: CouponResult = {
-  isApplied: false,
-  couponName: '미사용',
-  couponDiscount: 0,
-  finalPrice: null,
-};
-
-const INITIAL_SELECTED_COUPON_ID: number | null = null;
 
 const isFreeTrialAvailable = (trialParam: boolean, isTrialUsed: boolean, planId: number) => {
   const monthlyPlanId = PLAN_MAPPING['MONTH'];
@@ -63,10 +48,7 @@ export default function Payment() {
   const [isAgreed, setIsAgreed] = useState<boolean>(false);
   const [showAgreementError, setShowAgreementError] = useState<boolean>(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod>('CARD');
-  const [isFlowProcessing, setIsFlowProcessing] = useState<boolean>(false); // 버튼 클릭으로 시작된 처리 상태
-
-  const [couponApplyResult, setCouponApplyResult] = useState<CouponResult>(INITIAL_COUPON_RESULT);
-  const [lastSelectedCouponId, setLastSelectedCouponId] = useState<number | null>(INITIAL_SELECTED_COUPON_ID);
+  const [isFlowProcessing, setIsFlowProcessing] = useState<boolean>(false);
 
   const { data: userSummary } = useGetUserSummary();
   const { data: billingKey } = useGetBillingKey();
@@ -75,14 +57,10 @@ export default function Payment() {
     selectedId,
     isFreeTrialAvailable(isTrialParam, userSummary?.isTrialUsed ?? false, selectedId),
   );
+  const { data: couponApplyResult } = useGetAppliedCoupon({ paymentHistoryId: planInfo?.paymentHistoryId });
 
   const { startPaymentFlow } = usePaymentProcessor();
   const { isResuming } = usePaymentResume();
-
-  useEffect(() => {
-    setCouponApplyResult(INITIAL_COUPON_RESULT);
-    setLastSelectedCouponId(INITIAL_SELECTED_COUPON_ID);
-  }, [planInfo?.paymentHistoryId]);
 
   useEffect(() => {
     // 1. URL에 identityVerificationId 파라미터가 있고,
@@ -107,7 +85,7 @@ export default function Payment() {
   };
 
   const getFinalDisplayedPrice = () => {
-    if (couponApplyResult.finalPrice !== null) {
+    if (couponApplyResult && couponApplyResult.finalPrice !== null) {
       return couponApplyResult.finalPrice.toLocaleString('ko-KR');
     }
     return planInfo?.monthlyPrice?.toLocaleString('ko-KR') ?? '-';
@@ -186,27 +164,6 @@ export default function Payment() {
 
     largeStoreOpen('couponBox', {
       paymentHistoryId: planInfo.paymentHistoryId,
-      initialSelectedCouponId: lastSelectedCouponId,
-      onApplySuccess: (result: ApplyCouponResponse['result']) => {
-        if (result.couponHistoryId === null) {
-          setCouponApplyResult(INITIAL_COUPON_RESULT);
-          setLastSelectedCouponId(INITIAL_SELECTED_COUPON_ID); // null로 설정
-        } else if (result.isPossible) {
-          // 쿠폰 적용 성공
-          setCouponApplyResult({
-            isApplied: true,
-            couponName: result.couponName,
-            couponDiscount: result.couponDiscount,
-            finalPrice: result.finalPrice,
-          });
-          setLastSelectedCouponId(result.couponHistoryId);
-        } else {
-          // 적용할 수 없는 경우 (서버에서 reject)
-          alert('쿠폰을 적용할 수 없습니다.');
-          setCouponApplyResult(INITIAL_COUPON_RESULT);
-          setLastSelectedCouponId(INITIAL_SELECTED_COUPON_ID);
-        }
-      },
     });
   };
 
@@ -328,7 +285,7 @@ export default function Payment() {
                     isDisabled={isProcessing}
                   />
                 </S.InfoWrapper>
-                {couponApplyResult.isApplied && (
+                {couponApplyResult && (
                   <S.InfoWrapper>
                     <S.TagWrapper>
                       <S.ArrowIcon>

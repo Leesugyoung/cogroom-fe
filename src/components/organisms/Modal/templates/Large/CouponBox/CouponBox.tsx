@@ -6,20 +6,19 @@ import InfiniteScrollSentinel from '@/components/atoms/InfiniteScrollSentinel/In
 import OutlinedButton from '@/components/atoms/OutlinedButton/OutlinedButton';
 import EmptyState from '@/components/organisms/EmptyState/EmptyState';
 import { useApplyCouponMutation } from '@/hooks/api/payment/useApplyCoupon';
+import { useCancelCouponMutation } from '@/hooks/api/payment/useCancelCoupon';
+import { useGetAppliedCoupon } from '@/hooks/api/payment/useGetAppliedCoupon';
 import useGetCoupons from '@/hooks/api/payment/useGetCoupons';
 import useScroll from '@/hooks/useScroll';
 import { useLargeModalStore } from '@/stores/useModalStore2';
 import { ModalOptions } from '@/types/modal2';
-import { ApplyCouponResponse } from '@/types/payment';
 
 import * as S from './CouponBox.styled';
 
 export interface CouponBoxModalProps extends ModalOptions {
   [key: string]: unknown;
 
-  onApplySuccess: (result: ApplyCouponResponse['result']) => void;
   paymentHistoryId: number;
-  initialSelectedCouponId?: number | null;
 }
 
 const formatDiscountText = (discountType: string, discountValue: number) => {
@@ -29,19 +28,24 @@ const formatDiscountText = (discountType: string, discountValue: number) => {
   return `-${discountValue.toLocaleString('ko-KR')}`;
 };
 
-export default function CouponBox({ onApplySuccess, paymentHistoryId, initialSelectedCouponId }: CouponBoxModalProps) {
+export default function CouponBox({ paymentHistoryId }: CouponBoxModalProps) {
   const { data: couponsData, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetCoupons();
   const { applyCoupon } = useApplyCouponMutation();
+  const { cancelCoupon } = useCancelCouponMutation();
   const { close } = useLargeModalStore();
 
-  const [selectedCouponId, setSelectedCouponId] = useState<number | null>(initialSelectedCouponId ?? null);
+  const { data: appliedCouponData } = useGetAppliedCoupon({ paymentHistoryId });
+
+  const [selectedCouponId, setSelectedCouponId] = useState<number | null>(appliedCouponData?.couponHistoryId || null);
 
   const { observerRef } = useScroll({
     nextPage: hasNextPage,
     fetchNext: fetchNextPage,
   });
 
-  const coupons = couponsData?.pages ? couponsData.pages.flatMap((page) => page.data || []) : [];
+  const coupons = (couponsData?.pages ? couponsData.pages.flatMap((page) => page.data || []) : []).filter(
+    (coupon) => coupon.status === 'ACTIVE',
+  );
 
   const handleCouponToggle = (couponHistoryId: number) => {
     if (selectedCouponId === couponHistoryId) {
@@ -52,15 +56,14 @@ export default function CouponBox({ onApplySuccess, paymentHistoryId, initialSel
   };
 
   const handleApplyClick = () => {
-    applyCoupon(
-      { paymentHistoryId: String(paymentHistoryId), couponHistoryId: selectedCouponId },
-      {
-        onSuccess: (result) => {
-          onApplySuccess(result);
-          close();
-        },
-      },
-    );
+    close();
+
+    if (appliedCouponData && selectedCouponId === null) {
+      cancelCoupon({ paymentHistoryId: String(paymentHistoryId), couponHistoryId: appliedCouponData.couponHistoryId });
+      return;
+    }
+
+    applyCoupon({ paymentHistoryId: String(paymentHistoryId), couponHistoryId: selectedCouponId });
   };
 
   return (
@@ -79,6 +82,28 @@ export default function CouponBox({ onApplySuccess, paymentHistoryId, initialSel
                 <S.TableHeaderText>혜택</S.TableHeaderText>
               </S.Cell2>
             </S.TableHeader>
+
+            {appliedCouponData && (
+              <S.TableRow
+                key={appliedCouponData.couponHistoryId}
+                onClick={() => handleCouponToggle(appliedCouponData.couponHistoryId)}
+              >
+                <Checkbox
+                  isChecked={selectedCouponId === appliedCouponData.couponHistoryId}
+                  onToggle={() => handleCouponToggle(appliedCouponData.couponHistoryId)}
+                  size='nm'
+                  interactionVariant='normal'
+                />
+                <S.Cell1>
+                  <S.TableRowText>{appliedCouponData.couponName}</S.TableRowText>
+                </S.Cell1>
+                <S.Cell2>
+                  <S.TableRowText>
+                    {formatDiscountText(appliedCouponData.discountType, appliedCouponData.discountValue)}
+                  </S.TableRowText>
+                </S.Cell2>
+              </S.TableRow>
+            )}
 
             {coupons.map((coupon) => {
               const isChecked = selectedCouponId === coupon.couponHistoryId;

@@ -73,7 +73,7 @@ export const paymentHandlers = [
   }),
 
   // 쿠폰 적용
-  http.post(END_POINTS.PAYMENTS.APPLY_COUPON(':paymentHistoryId'), async ({ request, params }) => {
+  http.post(END_POINTS.PAYMENTS.PAYMENT_COUPONS(':paymentHistoryId'), async ({ request, params }) => {
     const { paymentHistoryId } = params;
     const url = new URL(request.url);
     const couponHistoryId = url.searchParams.get('couponHistoryId');

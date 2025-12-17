@@ -49,6 +49,7 @@ const PAYMENT_QUERY_KEYS = {
   PLAN_INFO: ['payment', 'plan', 'info'],
   PLANS: ['payment', 'plans'],
   BILLING_KEY: ['payment', 'billing_key'],
+  APPLIED_COUPON: ['payment', 'applied', 'coupon'],
   COUPONS: ['payment', 'coupons'],
 } as const;
 

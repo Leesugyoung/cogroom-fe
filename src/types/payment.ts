@@ -57,9 +57,30 @@ export interface CouponInfo {
   couponType: string;
   discountType: DiscountType;
   discountValue: number;
-  minPayAmount: number;
-  maxPayAmount: number;
   couponHistoryId: number;
+  couponCode: number;
+  endDate: string;
+  status: string;
+}
+
+export interface AppliedCouponRequest {
+  paymentHistoryId?: number;
+}
+
+export interface AppliedCouponResponse extends ApiResponse {
+  result: {
+    couponId: number;
+    couponName: string;
+    couponDiscount: number;
+    finalPrice: number;
+    couponHistoryId: number;
+    couponType: string;
+    discountType: DiscountType;
+    discountValue: number;
+    couponCode: number;
+    endDate: string;
+    status: string;
+  };
 }
 
 export interface CouponsRequest {
@@ -107,17 +128,6 @@ export interface VerifyPaymentResponse extends ApiResponse {
 export interface ApplyCouponRequest {
   paymentHistoryId: string;
   couponHistoryId: number | null;
-}
-
-export interface ApplyCouponResponse extends ApiResponse {
-  result: {
-    isPossible: boolean;
-    couponId: number;
-    couponName: string;
-    couponDiscount: number;
-    finalPrice: number;
-    couponHistoryId: number;
-  };
 }
 
 export interface PaymentHistory {

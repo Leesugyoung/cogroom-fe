@@ -171,6 +171,9 @@ export const END_POINTS = {
     /** 빌링키 조회 (GET) — 신규 결제자/플랜 업데이트 대상 확인용 */
     BILLING_KEY: `${BASE_PATH_V1.PAYMENTS}/billingKey`,
 
+    /** 적용된 쿠폰 조회 (GET) */
+    COUPON: `${BASE_PATH_V1.PAYMENTS}/coupon`,
+
     /** 사용할 수 있는 쿠폰 목록 조회 (GET) */
     COUPONS: `${BASE_PATH_V1.PAYMENTS}/coupons`,
 
@@ -184,8 +187,8 @@ export const END_POINTS = {
     /** 결제 인증 정보 조회 (POST) */
     VERIFY: `${BASE_PATH_V1.PAYMENTS}/verify`,
 
-    /** 쿠폰 적용 (POST) */
-    APPLY_COUPON: (paymentHistoryId: string) => `${BASE_PATH_V1.PAYMENTS}/${paymentHistoryId}/coupons`,
+    /** 결제별 쿠폰 적용 / 취소 (POST / DELETE) */
+    PAYMENT_COUPONS: (paymentHistoryId: string) => `${BASE_PATH_V1.PAYMENTS}/${paymentHistoryId}/coupons`,
   },
 
   ADMIN: {
