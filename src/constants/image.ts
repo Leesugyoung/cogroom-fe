@@ -57,12 +57,13 @@ export const DEFAULT_MYPAGE_BANNER_3: string = 'https://cdn.cogroom.com/default_
 // Loading
 export const DEFAULT_LOADING: string = 'https://cdn.cogroom.com/default_image/Loading.png';
 
-// Streak share
+// Streak
 export const STREAK_SHARE_IMAGE_URLS: string[] = [
   'https://cdn.cogroom.com/default_image/StreakShare01.png',
   'https://cdn.cogroom.com/default_image/StreakShare02.png',
   'https://cdn.cogroom.com/default_image/StreakShare03.png',
 ];
+export const STREAK_REVIVED_IMAGE: string = 'https://cdn.cogroom.com/default_image/Streak_Revived.png';
 
 // Subscription
 export const DEFAULT_FEATURE_BANNER_1: string = 'https://cdn.cogroom.com/default_image/Feature1.png';

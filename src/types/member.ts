@@ -12,6 +12,7 @@ export type UserSummary = {
   memberRole: MemberRole;
   isTrialUsed: boolean;
   planId: number;
+  isRevived: boolean;
 };
 
 export interface UserSummaryResponse extends ApiResponse {

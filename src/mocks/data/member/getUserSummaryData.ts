@@ -9,6 +9,7 @@ export const getUserSummarySuccess = {
     memberRole: 'ADMIN',
     isTrialUsed: true,
     planId: 2,
+    isRevived: true,
   },
 };
 
