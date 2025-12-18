@@ -40,9 +40,17 @@ export const PlanDescription = ({ subscription }: PlanDescriptionProps) => {
   };
 
   const getTitleMessage = () => {
-    return isPremium
-      ? `${premiumDays.toLocaleString()}일 동안 프리미엄을 유지하고 있어요`
-      : '코그룸과 함께 더욱, 깊이 성장해봐요';
+    return isPremium ? (
+      <>
+        {premiumDays.toLocaleString()}일 동안
+        <br /> 프리미엄을 유지하고 있어요
+      </>
+    ) : (
+      <>
+        코그룸과 함께
+        <br /> 더욱, 깊이 성장해봐요
+      </>
+    );
   };
 
   const handlePlanBenefitClick = () => {
@@ -113,7 +121,7 @@ export const PlanDescription = ({ subscription }: PlanDescriptionProps) => {
           )}
         </S.BenefitsList>
 
-        <S.PlanStartBox>
+        <S.PlanStartBox isFreePlan={isFreePlan}>
           <S.DetailButton onClick={handlePlanBenefitClick}>
             <S.PlanBenefitButton>
               <AlertCircle />
@@ -121,7 +129,7 @@ export const PlanDescription = ({ subscription }: PlanDescriptionProps) => {
             </S.PlanBenefitButton>
           </S.DetailButton>
 
-          <S.ButtonWrapper>
+          <S.ButtonWrapper isFreePlan={isFreePlan}>
             {isYearly ? (
               <S.OverideButton>
                 <OutlinedButton
@@ -141,6 +149,18 @@ export const PlanDescription = ({ subscription }: PlanDescriptionProps) => {
               />
             )}
           </S.ButtonWrapper>
+
+          {!isFreePlan && (
+            <S.PlanChgButtonWrapperMobile>
+              <TextButton
+                size='sm'
+                color='primary'
+                label='플랜 변경하기'
+                interactionVariant='normal'
+                onClick={handlePlanChange}
+              />
+            </S.PlanChgButtonWrapperMobile>
+          )}
         </S.PlanStartBox>
       </S.ContentWrapper>
       {!isFreePlan && (

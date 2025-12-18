@@ -2,11 +2,12 @@
 
 import styled from '@emotion/styled';
 
+import { mqMax } from '@/styles/foundation';
+
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.6rem;
-
   padding: 0.8rem;
 
   background: ${({ theme }) => theme.semantic.background.normal};
@@ -18,6 +19,16 @@ export const Container = styled.div`
 export const Title = styled.p`
   ${({ theme }) => theme.typography.heading2.semibold}
   color: ${({ theme }) => theme.cogroom.black};
+
+  br {
+    display: none;
+  }
+
+  ${mqMax.desktop} {
+    br {
+      display: block;
+    }
+  }
 `;
 
 export const ContentWrapper = styled.div`
@@ -26,6 +37,12 @@ export const ContentWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+
+  ${mqMax.tablet} {
+    flex-direction: column;
+    justify-content: start;
+    gap: 2.4rem;
+  }
 `;
 
 export const BenefitsList = styled.div<{ isPremium: boolean }>`
@@ -35,6 +52,10 @@ export const BenefitsList = styled.div<{ isPremium: boolean }>`
   flex-direction: column;
   justify-content: ${({ isPremium }) => (isPremium ? 'end' : 'start')};
   gap: 1.6rem;
+
+  ${mqMax.tablet} {
+    gap: 0.6rem;
+  }
 `;
 
 export const BenefitItem = styled.p`
@@ -96,7 +117,7 @@ export const DetailButton = styled.button`
   }
 `;
 
-export const PlanStartBox = styled.div`
+export const PlanStartBox = styled.div<{ isFreePlan?: boolean }>`
   height: 100%;
 
   display: flex;
@@ -105,14 +126,29 @@ export const PlanStartBox = styled.div`
 
   gap: 1.2rem;
   justify-content: end;
+
+  ${mqMax.tablet} {
+    align-items: flex-end;
+    margin-top: ${({ isFreePlan }) => (isFreePlan ? '0' : '10rem')};
+  }
 `;
 
-export const ButtonWrapper = styled.div`
+export const ButtonWrapper = styled.div<{ isFreePlan?: boolean }>`
   display: flex;
   flex-direction: row;
 
   gap: 1.2rem;
   align-items: end;
+
+  ${mqMax.tablet} {
+    width: auto;
+    justify-content: flex-end;
+    margin-left: auto;
+
+    button {
+      width: auto;
+    }
+  }
 `;
 
 export const PlanBenefitButton = styled.div`
@@ -139,6 +175,21 @@ export const PlanBenefitButtonText = styled.p`
 export const PlanChgButtonWrapper = styled.div`
   float: left;
   padding-top: 0.8rem;
+
+  ${mqMax.tablet} {
+    display: none;
+  }
+`;
+
+export const PlanChgButtonWrapperMobile = styled.div`
+  display: none;
+  width: 100%;
+  margin-top: 1.2rem;
+
+  ${mqMax.tablet} {
+    display: flex;
+    justify-content: flex-end;
+  }
 `;
 
 export const OverideButton = styled.div`
