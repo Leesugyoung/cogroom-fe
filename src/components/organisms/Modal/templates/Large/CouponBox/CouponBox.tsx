@@ -36,7 +36,9 @@ export default function CouponBox({ paymentHistoryId }: CouponBoxModalProps) {
 
   const { data: appliedCouponData } = useGetAppliedCoupon({ paymentHistoryId });
 
-  const [selectedCouponId, setSelectedCouponId] = useState<number | null>(appliedCouponData?.couponHistoryId || null);
+  const [selectedCouponId, setSelectedCouponId] = useState<number | null>(
+    appliedCouponData?.couponInfo.couponHistoryId || null,
+  );
 
   const { observerRef } = useScroll({
     nextPage: hasNextPage,
@@ -59,7 +61,10 @@ export default function CouponBox({ paymentHistoryId }: CouponBoxModalProps) {
     close();
 
     if (appliedCouponData && selectedCouponId === null) {
-      cancelCoupon({ paymentHistoryId: String(paymentHistoryId), couponHistoryId: appliedCouponData.couponHistoryId });
+      cancelCoupon({
+        paymentHistoryId: String(paymentHistoryId),
+        couponHistoryId: appliedCouponData.couponInfo.couponHistoryId,
+      });
       return;
     }
 
@@ -83,23 +88,26 @@ export default function CouponBox({ paymentHistoryId }: CouponBoxModalProps) {
               </S.Cell2>
             </S.TableHeader>
 
-            {appliedCouponData && (
+            {appliedCouponData?.couponDiscount && (
               <S.TableRow
-                key={appliedCouponData.couponHistoryId}
-                onClick={() => handleCouponToggle(appliedCouponData.couponHistoryId)}
+                key={appliedCouponData.couponInfo.couponHistoryId}
+                onClick={() => handleCouponToggle(appliedCouponData.couponInfo.couponHistoryId)}
               >
                 <Checkbox
-                  isChecked={selectedCouponId === appliedCouponData.couponHistoryId}
-                  onToggle={() => handleCouponToggle(appliedCouponData.couponHistoryId)}
+                  isChecked={selectedCouponId === appliedCouponData.couponInfo.couponHistoryId}
+                  onToggle={() => handleCouponToggle(appliedCouponData.couponInfo.couponHistoryId)}
                   size='nm'
                   interactionVariant='normal'
                 />
                 <S.Cell1>
-                  <S.TableRowText>{appliedCouponData.couponName}</S.TableRowText>
+                  <S.TableRowText>{appliedCouponData.couponInfo.couponName}</S.TableRowText>
                 </S.Cell1>
                 <S.Cell2>
                   <S.TableRowText>
-                    {formatDiscountText(appliedCouponData.discountType, appliedCouponData.discountValue)}
+                    {formatDiscountText(
+                      appliedCouponData.couponInfo.discountType,
+                      appliedCouponData.couponInfo.discountValue,
+                    )}
                   </S.TableRowText>
                 </S.Cell2>
               </S.TableRow>

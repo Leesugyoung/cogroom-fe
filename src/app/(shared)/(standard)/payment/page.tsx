@@ -285,13 +285,14 @@ export default function Payment() {
                     isDisabled={isProcessing}
                   />
                 </S.InfoWrapper>
-                {couponApplyResult && (
+
+                {couponApplyResult?.couponDiscount && (
                   <S.InfoWrapper>
                     <S.TagWrapper>
                       <S.ArrowIcon>
                         <ArrowTurnDownRight />
                       </S.ArrowIcon>
-                      <S.InfoTag>{couponApplyResult.couponName}</S.InfoTag>
+                      <S.InfoTag>{couponApplyResult.couponInfo.couponName}</S.InfoTag>
                     </S.TagWrapper>
 
                     <S.DiscountPrice>

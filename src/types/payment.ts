@@ -69,17 +69,19 @@ export interface AppliedCouponRequest {
 
 export interface AppliedCouponResponse extends ApiResponse {
   result: {
-    couponId: number;
-    couponName: string;
     couponDiscount: number;
     finalPrice: number;
-    couponHistoryId: number;
-    couponType: string;
-    discountType: DiscountType;
-    discountValue: number;
-    couponCode: number;
-    endDate: string;
-    status: string;
+    couponInfo: {
+      couponId: number;
+      couponName: string;
+      couponHistoryId: number;
+      couponType: string;
+      discountType: DiscountType;
+      discountValue: number;
+      couponCode: number;
+      endDate: string;
+      status: string;
+    };
   };
 }
 
