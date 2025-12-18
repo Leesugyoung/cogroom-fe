@@ -17,7 +17,7 @@ export const PaymentList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const { data: paymentData, isLoading } = useGetPaymentHistory({
+  const { data: paymentData } = useGetPaymentHistory({
     size: itemsPerPage,
     cursor: (currentPage - 1) * itemsPerPage,
   });

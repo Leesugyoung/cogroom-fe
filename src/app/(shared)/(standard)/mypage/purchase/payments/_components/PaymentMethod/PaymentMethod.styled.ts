@@ -2,6 +2,8 @@
 
 import styled from '@emotion/styled';
 
+import { mqMax } from '@/styles/foundation';
+
 export const MethodContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -29,6 +31,30 @@ export const PaymentMethodsWrapper = styled.div`
 
 export const ButtonBox = styled.div`
   width: fit-content;
+
+  ${mqMax.tablet} {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1.2rem;
+    width: fit-content;
+  }
+`;
+
+export const MobileAddButtonWrapper = styled.div`
+  display: none;
+
+  ${mqMax.tablet} {
+    display: block;
+  }
+`;
+
+export const DesktopAddButtonWrapper = styled.div`
+  display: block;
+
+  ${mqMax.tablet} {
+    display: none;
+  }
 `;
 
 export const Divider = styled.div`
@@ -72,4 +98,10 @@ export const DefaultCardBox = styled.div`
 export const CardName = styled.div`
   ${({ theme }) => theme.typography.body2.medium};
   color: ${({ theme }) => theme.palette.neutral[40]};
+`;
+
+export const MobileBox = styled.div`
+  ${mqMax.tablet} {
+    display: none;
+  }
 `;

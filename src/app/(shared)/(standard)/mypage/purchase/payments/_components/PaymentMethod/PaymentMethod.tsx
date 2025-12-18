@@ -110,6 +110,16 @@ export const PaymentMethod = () => {
             color='primary'
             interactionVariant='normal'
           />
+          <S.MobileAddButtonWrapper>
+            <TextButton
+              size='sm'
+              color='primary'
+              label='추가하기'
+              interactionVariant='normal'
+              iconLeft={<Plus />}
+              onClick={handleAddCard}
+            />
+          </S.MobileAddButtonWrapper>
         </S.ButtonBox>
 
         {cardPaymentMethods.map((card, index) => (
@@ -137,16 +147,18 @@ export const PaymentMethod = () => {
           </S.DefaultPaymentWrapper>
         ))}
 
-        <S.ButtonBox>
-          <TextButton
-            size='sm'
-            color='primary'
-            label='추가하기'
-            interactionVariant='normal'
-            iconLeft={<Plus />}
-            onClick={handleAddCard}
-          />
-        </S.ButtonBox>
+        <S.DesktopAddButtonWrapper>
+          <S.ButtonBox>
+            <TextButton
+              size='sm'
+              color='primary'
+              label='추가하기'
+              interactionVariant='normal'
+              iconLeft={<Plus />}
+              onClick={handleAddCard}
+            />
+          </S.ButtonBox>
+        </S.DesktopAddButtonWrapper>
       </S.PaymentMethodsWrapper>
 
       <S.Divider />
@@ -160,6 +172,18 @@ export const PaymentMethod = () => {
             interactionVariant='normal'
             iconRight={<Kakao className='kakao' />}
           />
+          {!hasKakaoPayment && (
+            <S.MobileAddButtonWrapper>
+              <TextButton
+                size='sm'
+                color='primary'
+                label='추가하기'
+                interactionVariant='normal'
+                iconLeft={<Plus />}
+                onClick={handleAddKakaoPay}
+              />
+            </S.MobileAddButtonWrapper>
+          )}
         </S.ButtonBox>
 
         {hasKakaoPayment && (
@@ -188,20 +212,24 @@ export const PaymentMethod = () => {
         )}
 
         {!hasKakaoPayment && (
-          <S.ButtonBox>
-            <TextButton
-              size='sm'
-              color='primary'
-              label='추가하기'
-              interactionVariant='normal'
-              iconLeft={<Plus />}
-              onClick={handleAddKakaoPay}
-            />
-          </S.ButtonBox>
+          <S.DesktopAddButtonWrapper>
+            <S.ButtonBox>
+              <TextButton
+                size='sm'
+                color='primary'
+                label='추가하기'
+                interactionVariant='normal'
+                iconLeft={<Plus />}
+                onClick={handleAddKakaoPay}
+              />
+            </S.ButtonBox>
+          </S.DesktopAddButtonWrapper>
         )}
       </S.PaymentMethodsWrapper>
 
-      <S.Divider />
+      <S.MobileBox>
+        <S.Divider />
+      </S.MobileBox>
     </S.MethodContainer>
   );
 };

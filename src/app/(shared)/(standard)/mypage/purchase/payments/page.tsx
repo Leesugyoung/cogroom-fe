@@ -1,5 +1,7 @@
 import { PaymentList } from './_components/PaymentList/PaymentList';
+import { PaymentListMobile } from './_components/PaymentListMobile/PaymentListMobile';
 import { PaymentMethod } from './_components/PaymentMethod/PaymentMethod';
+import * as S from './page.styled';
 import SettingGroup from '../../notification/_components/SettingGroup/SettingGroup';
 
 export default function Payments() {
@@ -9,7 +11,15 @@ export default function Payments() {
         <PaymentMethod />
       </SettingGroup>
 
-      <PaymentList />
+      <S.DesktopOnly>
+        <PaymentList />
+      </S.DesktopOnly>
+
+      <S.MobileOnly>
+        <SettingGroup title='결제 내역'>
+          <PaymentListMobile />
+        </SettingGroup>
+      </S.MobileOnly>
     </>
   );
 }
