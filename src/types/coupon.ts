@@ -24,7 +24,7 @@ export interface Coupon {
   couponHistoryId: number;
   couponCode: string;
   endDate: string;
-  status: 'ACTIVE';
+  status: 'ACTIVE' | 'RESERVED';
 }
 
 export interface CouponListResponse extends ApiResponse {

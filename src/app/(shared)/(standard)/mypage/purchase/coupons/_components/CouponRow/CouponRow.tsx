@@ -29,15 +29,22 @@ export default function CouponRow({ coupon }: CouponRowProps) {
     });
   };
 
-  return (
-    <S.CouponRow>
-      <S.CouponCell width='7rem'>
+  const renderLeftTag = () => {
+    if (coupon.status === 'RESERVED') {
+      return (
         <SolidTag
           label={'사용대기'}
           color={'blue'}
           round
         />
-      </S.CouponCell>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <S.CouponRow>
+      <S.CouponCell width='7rem'>{renderLeftTag()}</S.CouponCell>
       <S.CouponCell width='12rem'>{coupon.couponName}</S.CouponCell>
       <S.CouponCell width='12rem'>
         {coupon.discountType === 'PERCENT'
