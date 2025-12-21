@@ -254,6 +254,15 @@ export const COUPON_TABLE_HEADER_ITEMS: TableHeaderItem[] = [
   { label: '수정', mode: 'expand', align: 'center' },
 ] as const;
 
+export const COUPON_HISTORY_TABLE_HEADER_ITEMS: TableHeaderItem[] = [
+  { label: '닉네임(회원번호)', mode: 'expand', align: 'center' },
+  { label: '회원ID', mode: 'expand', align: 'center' },
+  { label: '발급일시', mode: 'expand', align: 'center' },
+  { label: '쿠폰유형', mode: 'expand', align: 'center' },
+  { label: '사용여부', mode: 'expand', align: 'center' },
+  { label: '사용일시', mode: 'expand', align: 'center' },
+] as const;
+
 export const MYPAGE_COUPON_TABLE_HEADER_ITEM: TableHeaderItem[] = [
   { label: '상태', width: '8rem', align: 'center', mode: 'fix' },
   { label: '쿠폰명', width: '12rem', align: 'center', mode: 'fix' },

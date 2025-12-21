@@ -70,6 +70,10 @@ export default function CouponListRow({ coupon, checked, onCheckToggle }: Coupon
     router.push(`/admin/payments/coupons/create?${searchParams.toString()}`);
   };
 
+  const handleManageClick = () => {
+    router.push(`/admin/payments/coupons/${coupon.couponId}/history`);
+  };
+
   return (
     <S.Row>
       <S.CheckboxCell>
@@ -117,6 +121,7 @@ export default function CouponListRow({ coupon, checked, onCheckToggle }: Coupon
           label={'관리'}
           color='assistive'
           interactionVariant='normal'
+          onClick={handleManageClick}
         />
       </S.Cell>
 

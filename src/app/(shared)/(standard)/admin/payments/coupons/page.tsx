@@ -19,10 +19,10 @@ import { useAlertModalStore } from '@/stores/useModalStore';
 import { Coupon } from '@/types/admin';
 import { SortType } from '@/types/member';
 
-import PaymentTabSelect from '../_components/PaymentTabSelect/PaymentTabSelect';
-import * as SS from '../page.styled';
 import * as S from './page.styled';
 import CouponListRow from '../_components/CouponListRow/CouponListRow';
+import PaymentTabSelect from '../_components/PaymentTabSelect/PaymentTabSelect';
+import * as SS from '../page.styled';
 
 export default function Coupons() {
   const router = useRouter();
