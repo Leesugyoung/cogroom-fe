@@ -2,6 +2,8 @@
 
 import styled from '@emotion/styled';
 
+import { mqMax } from '@/styles/foundation';
+
 export const CouponForm = styled.form`
   display: flex;
   flex-direction: row;
@@ -17,4 +19,18 @@ export const CouponForm = styled.form`
 export const PaginationWrapper = styled.div`
   margin: 0 auto;
   padding: 2.4rem 0;
+`;
+
+export const ResponsiveWrpaper = styled.div`
+  ${mqMax.tablet} {
+    display: none;
+  }
+`;
+
+export const MobileCouponListWrapper = styled.div`
+  display: none;
+
+  ${mqMax.tablet} {
+    display: block;
+  }
 `;

@@ -16,7 +16,9 @@ import useRegisterCoupon from '@/hooks/api/member/useRegisterCoupon';
 import { Coupon } from '@/types/coupon';
 
 import CouponRow from './_components/CouponRow/CouponRow';
+import { MobileCouponList } from './_components/MobileCouponList/MobileCouponList';
 import * as S from './page.styled';
+import SettingGroup from '../../notification/_components/SettingGroup/SettingGroup';
 
 export default function Coupons() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -95,35 +97,43 @@ export default function Coupons() {
         </S.CouponForm>
       </FormProvider>
 
-      <Table
-        headerItems={
-          !couponData?.data || couponData.data.length === 0 ? nonDataHeaderItems : MYPAGE_COUPON_TABLE_HEADER_ITEM
-        }
-        showSelection={false}
-        isEmpty={!couponData?.data || couponData.data.length === 0}
-        emptyState={
-          <EmptyState
-            icon={<Message />}
-            description='사용 가능한 쿠폰이 없어요'
-          />
-        }
-      >
-        {couponData?.data?.map((coupon: Coupon) => (
-          <CouponRow
-            key={coupon.couponId}
-            coupon={coupon}
-          />
-        ))}
-      </Table>
+      <S.MobileCouponListWrapper>
+        <SettingGroup title='쿠폰 목록'>
+          <MobileCouponList />
+        </SettingGroup>
+      </S.MobileCouponListWrapper>
 
-      <S.PaginationWrapper>
-        <NumberPagination
-          size='sm'
-          currentPage={currentPage + 1}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
-      </S.PaginationWrapper>
+      <S.ResponsiveWrpaper>
+        <Table
+          headerItems={
+            !couponData?.data || couponData.data.length === 0 ? nonDataHeaderItems : MYPAGE_COUPON_TABLE_HEADER_ITEM
+          }
+          showSelection={false}
+          isEmpty={!couponData?.data || couponData.data.length === 0}
+          emptyState={
+            <EmptyState
+              icon={<Message />}
+              description='사용 가능한 쿠폰이 없어요'
+            />
+          }
+        >
+          {couponData?.data?.map((coupon: Coupon) => (
+            <CouponRow
+              key={coupon.couponId}
+              coupon={coupon}
+            />
+          ))}
+        </Table>
+
+        <S.PaginationWrapper>
+          <NumberPagination
+            size='sm'
+            currentPage={currentPage + 1}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </S.PaginationWrapper>
+      </S.ResponsiveWrpaper>
     </>
   );
 }
