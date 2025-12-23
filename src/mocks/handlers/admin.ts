@@ -17,6 +17,7 @@ import { getAdminCommentListSuccess } from '../data/admin/getAdminCommentListDat
 import { getAdminCouponListData } from '../data/admin/getAdminCouponsListData';
 import { getAdminPaymentHistoryData } from '../data/admin/getAdminPaymentHistoryData';
 import { getAdminPostListSuccess } from '../data/admin/getAdminPostListData';
+import { getCouponHistorySuccess } from '../data/admin/getCouponHistoryData';
 import { getDailyQuestionsSuccess } from '../data/admin/getDailyQuestionsData';
 import {
   getMemberDailyQuestionsError,
@@ -257,6 +258,74 @@ export const adminHandlers = [
   // 쿠폰 수정
   http.patch(END_POINTS.ADMIN.COUPONS.LIST, async () => {
     return new HttpResponse(JSON.stringify(updateCouponSuccess), {
+      status: HTTP_STATUS_CODE.OK,
+    });
+  }),
+
+  // 쿠폰 발급 내역 조회
+  http.get(END_POINTS.ADMIN.COUPONS.HISTORY, async ({ request }) => {
+    const url = new URL(request.url);
+    const params = Object.fromEntries(url.searchParams.entries());
+
+    const couponId = params.couponId ? Number(params.couponId) : undefined;
+    const keyword = params.keyword;
+    const couponHistoryStatus = params.couponHistoryStatus;
+    const size = Number(params.size) || 5;
+    const cursor = Number(params.cursor) || 0;
+
+    let filteredData = [...getCouponHistorySuccess.result.data.couponHistory];
+
+    // couponId 필터링
+    if (couponId && couponId !== getCouponHistorySuccess.result.data.couponId) {
+      filteredData = [];
+    }
+
+    // 키워드 검색 (닉네임, 이메일)
+    if (keyword) {
+      const searchKeyword = keyword.toLowerCase();
+      filteredData = filteredData.filter((history) => {
+        const nicknameMatch = history.nickname.toLowerCase().includes(searchKeyword);
+        const emailMatch = history.email.toLowerCase().includes(searchKeyword);
+        return nicknameMatch || emailMatch;
+      });
+    }
+
+    // 사용 여부 필터링
+    if (couponHistoryStatus) {
+      filteredData = filteredData.filter((history) => history.couponHistoryStatus === couponHistoryStatus);
+    }
+
+    // 날짜 필터링은 간단하게 구현 (실제로는 startDate, endDate 파라미터 사용)
+
+    // 페이지네이션 적용
+    const paginatedData = filteredData.slice(cursor, cursor + size);
+    const hasMore = cursor + size < filteredData.length;
+    const nextCursor = hasMore ? cursor + size : null;
+
+    // 통계 데이터 계산
+    const totalCouponHistory = filteredData.length;
+    const unusedCount = filteredData.filter(
+      (h) => h.couponHistoryStatus === 'ACTIVE' || h.couponHistoryStatus === 'RESERVED',
+    ).length;
+    const usedCount = filteredData.filter((h) => h.couponHistoryStatus === 'USED').length;
+
+    const response = {
+      ...getCouponHistorySuccess,
+      result: {
+        data: {
+          couponId: couponId || getCouponHistorySuccess.result.data.couponId,
+          couponHistory: paginatedData,
+          totalCouponHistory,
+          unusedCouponHistoryCount: unusedCount,
+          usedCouponHistoryCount: usedCount,
+        },
+        nextCursor,
+        last: !hasMore,
+        totalElements: totalCouponHistory,
+      },
+    };
+
+    return new HttpResponse(JSON.stringify(response), {
       status: HTTP_STATUS_CODE.OK,
     });
   }),

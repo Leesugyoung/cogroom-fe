@@ -1,58 +1,137 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import SortButton from '@/app/(shared)/(standard)/mypage/_components/SortButton/SortButton';
 import Plus from '@/assets/icons/plus.svg';
+import ScriptX from '@/assets/icons/script-x.svg';
 import SolidButton from '@/components/atoms/SolidButton/SolidButton';
 import NumberPagination from '@/components/molecules/NumberPagination/NumberPagination';
 import SearchFilter from '@/components/molecules/SearchFilter/SearchFilter';
+import EmptyState from '@/components/organisms/EmptyState/EmptyState';
+import Loading from '@/components/organisms/Loading/Loading';
 import Table from '@/components/organisms/Table/Table';
-import { COUPON_TYPE_OPTIONS, COUPON_HISTORY_TABLE_HEADER_ITEMS } from '@/constants/common';
+import { COUPON_HISTORY_TABLE_HEADER_ITEMS } from '@/constants/common';
+import { useGetCouponHistory } from '@/hooks/api/admin/useGetCouponHistory';
+import { useAlertModalStore } from '@/stores/useModalStore';
+import { CouponHistoryRequest } from '@/types/admin';
 import { SortType } from '@/types/member';
+import { formatDayAsSlashYYYYMMDD } from '@/utils/date/formatDay';
 
 import CouponHistoryRow from './_components/CouponHistoryRow/CouponHistoryRow';
 import * as S from './page.styled';
 import PaymentTabSelect from '../../../_components/PaymentTabSelect/PaymentTabSelect';
 import * as SS from '../../../page.styled';
 
+const COUPON_HISTORY_STATUS_OPTIONS = [
+  { value: 'ALL', label: '전체' },
+  { value: 'UNUSED', label: '미사용' },
+  { value: 'USED', label: '사용완료' },
+];
+
 export default function CouponHistoryPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [sort, setSort] = useState<SortType>('latest');
+  const [filters, setFilters] = useState<CouponHistoryRequest>({
+    size: 5,
+    cursor: 0,
+  });
 
   const router = useRouter();
+  const params = useParams();
+  const searchParams = useSearchParams();
+  const { open: openAlert } = useAlertModalStore();
+  const couponId = params.id ? Number(params.id) : undefined;
+  const couponName = searchParams.get('couponName') || '-';
 
-  // Mock
-  const mockHistoryData = [
-    {
-      id: 1,
-      nickname: '사용자1',
-      memberId: 1001,
-      userId: 'user1@example.com',
-      issuedAt: '2024.12.21 10:30',
-      couponType: '체험형',
-      isUsed: true,
-      usedAt: '2024.12.21 15:45',
-    },
-    {
-      id: 2,
-      nickname: '사용자2',
-      memberId: 1002,
-      userId: 'user2@example.com',
-      issuedAt: '2024.12.21 11:20',
-      couponType: '제휴형',
-      isUsed: false,
-      usedAt: '-',
-    },
-  ];
+  useEffect(() => {
+    const keyword = searchParams.get('keyword') || undefined;
+    const usageStatus = searchParams.get('usageStatus') || undefined;
+    const startDate = searchParams.get('startDate') || undefined;
+    const endDate = searchParams.get('endDate') || undefined;
 
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(mockHistoryData.length / itemsPerPage);
+    let couponHistoryStatus: string | undefined;
+    if (usageStatus === 'UNUSED') {
+      couponHistoryStatus = 'ACTIVE';
+    } else if (usageStatus === 'USED') {
+      couponHistoryStatus = 'USED';
+    }
 
-  const handleSearchSubmit = () => {
-    setCurrentPage(1);
-  };
+    setFilters({
+      size: 5,
+      cursor: 0,
+      keyword,
+      couponHistoryStatus,
+      startDate: startDate ? formatDayAsSlashYYYYMMDD(startDate) : undefined,
+      endDate: endDate ? formatDayAsSlashYYYYMMDD(endDate) : undefined,
+    });
+  }, [searchParams]);
+
+  const {
+    data: couponHistoryData,
+    isLoading,
+    error,
+  } = useGetCouponHistory({
+    ...filters,
+    couponId,
+  });
+
+  useEffect(() => {
+    if (error) {
+      const errorCode = (error as { response?: { data?: { errorCode?: string; message?: string } } })?.response?.data
+        ?.errorCode;
+
+      const excludedErrorCodes = [
+        'TOKEN_INVALID_ERROR',
+        'TOKEN_EXPIRED_ERROR',
+        'ACCESS_TOKEN_EMPTY_ERROR',
+        'INTERNAL_SERVER_ERROR',
+      ];
+
+      if (errorCode && !excludedErrorCodes.includes(errorCode)) {
+        let errorMessage = '오류가 발생했습니다.';
+
+        switch (errorCode) {
+          case 'FORBIDDEN_ERROR':
+            errorMessage = '사용자 권한이 없습니다.';
+            break;
+          case 'COUPON_FORBIDDEN_ERROR':
+            errorMessage = '쿠폰 관리 권한이 없습니다.';
+            break;
+          case 'PAGE_OUT_OF_RANGE_ERROR':
+            errorMessage = '요청한 페이지가 범위를 초과했습니다.';
+            break;
+          case 'DATE_FORMAT_INVALID_ERROR':
+            errorMessage = '유효한 날짜 형식이 아닙니다.';
+            break;
+          case 'INVALID_CATEGORY_ERROR':
+            errorMessage = '유효하지 않은 카테고리입니다.';
+            break;
+          case 'MEMBER_NOT_FOUND_ERROR':
+            errorMessage = '사용자를 찾을 수 없습니다.';
+            break;
+          default:
+            errorMessage =
+              (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+              '오류가 발생했습니다.';
+        }
+
+        openAlert('alert', {
+          message: errorMessage,
+          type: 'alert',
+          onConfirm: () => {
+            if (errorCode === 'FORBIDDEN_ERROR' || errorCode === 'COUPON_FORBIDDEN_ERROR') {
+              router.push('/mypage');
+            }
+          },
+        });
+      }
+    }
+  }, [error, openAlert]);
+
+  const itemsPerPage = 5;
+  const totalPages = couponHistoryData ? Math.ceil(couponHistoryData.totalElements / itemsPerPage) : 1;
 
   const handleCouponCreate = () => {
     router.push('/admin/payments/coupons/create');
@@ -64,16 +143,25 @@ export default function CouponHistoryPage() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    const newCursor = (page - 1) * itemsPerPage;
+    setFilters((prev) => ({
+      ...prev,
+      cursor: newCursor,
+    }));
+  };
+
+  const handleSearchSubmit = () => {
+    setCurrentPage(1);
   };
 
   const filterFields = {
     search: [{ name: 'keyword', placeholder: '회원정보 검색' }],
     select: [
       {
-        name: 'couponType',
-        placeholder: '쿠폰유형',
-        options: COUPON_TYPE_OPTIONS,
-        isMulti: true,
+        name: 'usageStatus',
+        placeholder: '사용여부',
+        options: COUPON_HISTORY_STATUS_OPTIONS,
+        isMulti: false,
       },
     ],
     dateRange: {
@@ -87,6 +175,8 @@ export default function CouponHistoryPage() {
     variant: 'outlined' as const,
     onClick: handleSearchSubmit,
   };
+
+  if (isLoading) return <Loading />;
 
   return (
     <S.CouponHistoryContainer>
@@ -111,7 +201,7 @@ export default function CouponHistoryPage() {
       <S.FilterHeader>
         <S.CheckCouponwrapper>
           <S.CheckCouponTitle>조회 쿠폰 |</S.CheckCouponTitle>
-          <S.CheckCouponValue>신규회원 5% 할인</S.CheckCouponValue>
+          <S.CheckCouponValue>{couponName}</S.CheckCouponValue>
         </S.CheckCouponwrapper>
         <SortButton
           sort={sort}
@@ -119,18 +209,38 @@ export default function CouponHistoryPage() {
         />
       </S.FilterHeader>
 
-      <Table headerItems={COUPON_HISTORY_TABLE_HEADER_ITEMS}>
-        {mockHistoryData.map((item) => (
+      <Table
+        headerItems={COUPON_HISTORY_TABLE_HEADER_ITEMS}
+        isEmpty={!couponHistoryData?.data?.couponHistory?.length}
+        emptyState={
+          <EmptyState
+            icon={<ScriptX />}
+            description='발급 내역이 없어요'
+          />
+        }
+      >
+        {couponHistoryData?.data?.couponHistory?.map((item) => (
           <CouponHistoryRow
-            key={item.id}
-            item={item}
+            key={item.couponHistoryId}
+            item={{
+              id: item.couponHistoryId,
+              nickname: item.nickname,
+              memberId: item.memberId,
+              userId: item.email,
+              issuedAt: item.issuedAt,
+              couponType: item.couponType,
+              isUsed: item.couponHistoryStatus === 'USED',
+              usedAt: item.usedAt || '-',
+              couponHistoryStatus: item.couponHistoryStatus,
+            }}
           />
         ))}
       </Table>
 
       <S.SearchResults>
-        <S.BoldText>총 수량</S.BoldText> : 000개 / <S.BoldText> 미사용</S.BoldText> : 00개 /
-        <S.BoldText> 사용완료</S.BoldText> : 00개
+        <S.BoldText>총 수량</S.BoldText> : {couponHistoryData?.data?.totalCouponHistory || 0}개 /
+        <S.BoldText> 미사용</S.BoldText> : {couponHistoryData?.data?.unusedCouponHistoryCount || 0}개 /
+        <S.BoldText> 사용완료</S.BoldText> : {couponHistoryData?.data?.usedCouponHistoryCount || 0}개
       </S.SearchResults>
       <S.NumberPaginationBox>
         <NumberPagination

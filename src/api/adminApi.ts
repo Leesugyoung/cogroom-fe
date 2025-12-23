@@ -20,6 +20,8 @@ import {
   AdminPaymentHistoryResponse,
   CreateCouponRequest,
   UpdateCouponRequest,
+  CouponHistoryRequest,
+  CouponHistoryResponse,
 } from '@/types/admin';
 import { ApiResponse } from '@/types/api';
 
@@ -122,6 +124,12 @@ const updateCoupon = async (request: UpdateCouponRequest) => {
   return data;
 };
 
+/** 쿠폰 발급 내역 조회 */
+const getCouponHistory = async (params: CouponHistoryRequest) => {
+  const { data } = await axiosInstance.get<CouponHistoryResponse>(END_POINTS.ADMIN.COUPONS.HISTORY, { params });
+  return data.result;
+};
+
 export const adminApi = {
   getMemberList,
   getMemberDailyQuestions,
@@ -135,4 +143,5 @@ export const adminApi = {
   getPaymentHistory,
   createCoupon,
   updateCoupon,
+  getCouponHistory,
 };

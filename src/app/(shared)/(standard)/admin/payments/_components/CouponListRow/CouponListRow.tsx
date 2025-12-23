@@ -71,7 +71,9 @@ export default function CouponListRow({ coupon, checked, onCheckToggle }: Coupon
   };
 
   const handleManageClick = () => {
-    router.push(`/admin/payments/coupons/${coupon.couponId}/history`);
+    const searchParams = new URLSearchParams();
+    searchParams.append('couponName', coupon.couponName);
+    router.push(`/admin/payments/coupons/${coupon.couponId}/history?${searchParams.toString()}`);
   };
 
   return (

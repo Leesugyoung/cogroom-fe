@@ -199,3 +199,41 @@ export interface UpdateCouponRequest {
   endDate: string;
   couponId: number;
 }
+
+export interface CouponHistoryRequest {
+  couponId?: number;
+  keyword?: string;
+  couponHistoryStatus?: string;
+  startDate?: string;
+  endDate?: string;
+  cursor?: number;
+  size?: number;
+}
+
+export interface CouponHistoryItem {
+  couponHistoryId: number;
+  memberId: number;
+  nickname: string;
+  email: string;
+  issuedAt: string;
+  couponType: string;
+  couponHistoryStatus: string;
+  usedAt?: string;
+}
+
+export interface CouponHistoryResponse {
+  code: number;
+  message: string;
+  result: {
+    data: {
+      couponId: number;
+      couponHistory: CouponHistoryItem[];
+      totalCouponHistory: number;
+      unusedCouponHistoryCount: number;
+      usedCouponHistoryCount: number;
+    };
+    nextCursor: number | null;
+    last: boolean;
+    totalElements: number;
+  };
+}
