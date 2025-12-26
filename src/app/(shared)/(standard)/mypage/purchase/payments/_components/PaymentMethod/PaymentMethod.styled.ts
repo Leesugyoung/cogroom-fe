@@ -41,6 +41,15 @@ export const ButtonBox = styled.div`
   }
 `;
 
+export const ButtonCursorBox = styled.div`
+  > button {
+    cursor: default !important;
+    :hover {
+      background-color: transparent !important;
+    }
+  }
+`;
+
 export const MobileAddButtonWrapper = styled.div`
   display: none;
 

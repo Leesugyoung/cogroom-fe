@@ -1,6 +1,7 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
+import { MEMBER_QUERY_KEYS } from '@/constants/queryKeys';
 import { useVerifyPaymentMutation } from '@/hooks/api/payment/useVerifyPayment';
 import { useAlertModalStore } from '@/stores/useModalStore';
 import { PaymentMethod } from '@/types/payment';
@@ -16,6 +17,7 @@ export const useRegisterPaymentMethod = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const { open: openAlert } = useAlertModalStore();
   const { verifyPayment } = useVerifyPaymentMutation();
+  const queryClient = useQueryClient();
 
   const billingKeyMutation = useMutation({
     mutationFn: async ({ paymentMethod, billingParams, isFromMyPage }: RegisterPaymentMethodParams) => {
@@ -75,6 +77,11 @@ export const useRegisterPaymentMethod = () => {
     onSuccess: (data) => {
       const methodText = data.paymentMethod === 'CARD' ? '카드' : '카카오페이';
       openAlert('alert', { message: `${methodText} 결제 수단이 성공적으로 등록되었습니다.` });
+
+      // 결제 수단 목록 새로고침
+      queryClient.invalidateQueries({
+        queryKey: MEMBER_QUERY_KEYS.MEMBER_PAYMENT_METHOD,
+      });
     },
     onError: (error: Error) => {
       openAlert('error', { message: error.message || '결제 수단 등록에 실패했습니다.' });

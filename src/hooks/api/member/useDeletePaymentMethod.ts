@@ -23,6 +23,9 @@ export const useDeletePaymentMethodMutation = () => {
       let message = '결제 수단 삭제에 실패하였습니다.';
 
       switch (errorCode) {
+        case 'PM105':
+          message = '결제수단은 최소 1개가 필요합니다.';
+          break;
         case 'PAYMENT_METHOD_NOT_FOUND':
           message = '등록된 결제 수단을 찾을 수 없습니다.';
           break;

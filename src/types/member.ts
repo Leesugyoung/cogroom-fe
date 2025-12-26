@@ -118,13 +118,11 @@ export type PaymentMethodItem = {
   paymentMethodId: number;
   cardName?: string;
   cardNum?: number | null;
-  type: PaymentMethodType;
+  paymentType: PaymentMethodType;
   isPresent: boolean;
 };
 
-export type PaymentMethod = {
-  data: PaymentMethodItem[];
-};
+export type PaymentMethod = PaymentMethodItem[];
 
 export interface PaymentMethodResponse extends ApiResponse {
   result: PaymentMethod;

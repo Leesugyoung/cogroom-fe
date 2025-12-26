@@ -41,10 +41,9 @@ export const PaymentMethod = () => {
       isFromMyPage: true,
     });
   };
-
-  const cardPaymentMethods = paymentMethod?.data?.filter((item) => item.type === 'CARD') || [];
-  const hasKakaoPayment = paymentMethod?.data?.some((item) => item.type === 'KAKAO_PAY');
-  const kakaoPayment = paymentMethod?.data?.find((item) => item.type === 'KAKAO_PAY');
+  const cardPaymentMethods = paymentMethod?.filter((item) => item.paymentType === 'CARD') || [];
+  const hasKakaoPayment = paymentMethod?.some((item) => item.paymentType === 'KAKAO_PAY');
+  const kakaoPayment = paymentMethod?.find((item) => item.paymentType === 'KAKAO_PAY');
 
   const handleDeleteConfirm = (paymentMethodId: number) => {
     largeStoreOpen('confirm', {
@@ -104,12 +103,15 @@ export const PaymentMethod = () => {
     <S.MethodContainer>
       <S.PaymentMethodsWrapper>
         <S.ButtonBox>
-          <OutlinedButton
-            size='sm'
-            label={'체크/신용 카드'}
-            color='primary'
-            interactionVariant='normal'
-          />
+          <S.ButtonCursorBox>
+            <OutlinedButton
+              size='sm'
+              label={'체크/신용 카드'}
+              color='primary'
+              interactionVariant='normal'
+            />
+          </S.ButtonCursorBox>
+
           <S.MobileAddButtonWrapper>
             <TextButton
               size='sm'
@@ -165,13 +167,16 @@ export const PaymentMethod = () => {
 
       <S.PaymentMethodsWrapper>
         <S.ButtonBox>
-          <OutlinedButton
-            size='sm'
-            label={'카카오페이'}
-            color='kakao'
-            interactionVariant='normal'
-            iconRight={<Kakao className='kakao' />}
-          />
+          <S.ButtonCursorBox>
+            <OutlinedButton
+              size='sm'
+              label={'카카오페이'}
+              color='kakao'
+              interactionVariant='normal'
+              iconRight={<Kakao className='kakao' />}
+            />
+          </S.ButtonCursorBox>
+
           {!hasKakaoPayment && (
             <S.MobileAddButtonWrapper>
               <TextButton
