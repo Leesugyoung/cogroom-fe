@@ -48,9 +48,9 @@ export const PAYMENT_CATEGORY_OPTIONS: SelectOptionOrGroup[] = [
   {
     label: '상품명',
     children: [
-      { value: 'PREMIUM_MONTH', label: '프리미엄 결제 / 월' },
-      { value: 'PREMIUM_YEAR', label: '프리미엄 결제 / 연' },
-      { value: 'OTHER_PRODUCT', label: '기타' },
+      { value: 'MONTH', label: '프리미엄 결제 / 월' },
+      { value: 'YEAR', label: '프리미엄 결제 / 연' },
+      { value: 'OTHER', label: '기타' },
     ],
   },
   {

@@ -32,6 +32,7 @@ export default function PaymentManagement() {
   const [sort, setSort] = useState<SortType>('latest');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [cursors, setCursors] = useState<{ [page: number]: number | null }>({ 1: null });
   const [searchFilters, setSearchFilters] = useState({
     keyword: '',
     category: [] as string[],
@@ -53,7 +54,13 @@ export default function PaymentManagement() {
 
   const handleSortToggle = () => {
     setSort((prev) => (prev === 'latest' ? 'highest' : prev === 'highest' ? 'lowest' : 'latest'));
+    setCurrentPage(1);
+    setCursors({ 1: null });
   };
+
+  const currentCursor = cursors[currentPage] ?? null;
+  // cursor 정규화: 0이면 null로 변환
+  const normalizedCursor = currentCursor === 0 ? null : currentCursor;
 
   const {
     data: paymentsData,
@@ -61,7 +68,7 @@ export default function PaymentManagement() {
     error,
   } = useGetPaymentHistory({
     size: itemsPerPage,
-    cursor: (currentPage - 1) * itemsPerPage,
+    cursor: normalizedCursor,
     sort,
     keyword: searchFilters.keyword,
     category: searchFilters.category,
@@ -95,6 +102,21 @@ export default function PaymentManagement() {
   }, [error, openAlert]);
 
   const payments = useMemo(() => paymentsData?.data ?? [], [paymentsData]);
+
+  useEffect(() => {
+    if (paymentsData?.nextCursor && !paymentsData.last) {
+      setCursors((prev) => {
+        // 이미 존재하면 업데이트하지 않음
+        if (prev[currentPage + 1]) return prev;
+
+        return {
+          ...prev,
+          [currentPage + 1]: paymentsData.nextCursor,
+        };
+      });
+    }
+  }, [paymentsData, currentPage]);
+
   const currentPageIds = useMemo(() => payments.map((p) => p.paymentHistoryId), [payments]);
   const isAllSelected = currentPageIds.every((id) => selectedIds.includes(id));
 
@@ -132,6 +154,7 @@ export default function PaymentManagement() {
     }));
 
     setCurrentPage(1);
+    setCursors({ 1: null });
     setSelectedIds([]);
   };
 
@@ -147,12 +170,14 @@ export default function PaymentManagement() {
       return updated;
     });
     setCurrentPage(1);
+    setCursors({ 1: null });
     setSelectedIds([]);
   };
 
   const handleResetFilters = () => {
     setSearchFilters({ keyword: '', category: [], startDate: '', endDate: '', searchField: 'nickname' });
     setCurrentPage(1);
+    setCursors({ 1: null });
     setSelectedIds([]);
     clearAllSearchParams();
   };

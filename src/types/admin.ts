@@ -144,7 +144,7 @@ export interface AdminPaymentHistoryRequest {
   endDate?: string;
   keyword?: string;
   category?: string[];
-  cursor?: number;
+  cursor?: number | null;
   size?: number;
   sort?: string;
 }

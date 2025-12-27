@@ -32,6 +32,7 @@ export default function Coupons() {
   const [sort, setSort] = useState<SortType>('latest');
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [cursors, setCursors] = useState<{ [page: number]: number | null }>({ 1: null });
   const [searchFilters, setSearchFilters] = useState({
     keyword: '',
     couponTypes: [] as string[],
@@ -73,6 +74,8 @@ export default function Coupons() {
     }
 
     setSelectedStatusOptions(newStatusOptions);
+    setCurrentPage(1);
+    setCursors({ 1: null });
 
     const currentParams = new URLSearchParams(searchParams.toString());
     currentParams.delete('couponStatus');
@@ -88,13 +91,15 @@ export default function Coupons() {
 
   const handleSortToggle = () => {
     setSort((prev) => (prev === 'latest' ? 'oldest' : 'latest'));
+    setCurrentPage(1);
+    setCursors({ 1: null });
   };
 
   const apiStatus = useMemo((): Set<string> => {
     return new Set(selectedStatusOptions);
   }, [selectedStatusOptions]);
 
-  const cursorValue = (currentPage - 1) * itemsPerPage;
+  const currentCursor = cursors[currentPage] ?? null;
 
   const {
     data: couponsData,
@@ -103,7 +108,7 @@ export default function Coupons() {
   } = useGetCoupons({
     status: apiStatus,
     size: itemsPerPage,
-    cursor: cursorValue === 0 ? null : cursorValue,
+    cursor: currentCursor,
     sort: sort === 'latest' ? 'latest' : 'oldest',
     keyword: searchFilters.keyword,
     couponTypes: new Set(searchFilters.couponTypes),
@@ -158,6 +163,20 @@ export default function Coupons() {
   }, [error, openAlert]);
 
   const coupons = useMemo(() => couponsData?.data ?? ([] as Coupon[]), [couponsData]);
+
+  useEffect(() => {
+    if (couponsData?.nextCursor && !couponsData.last) {
+      setCursors((prev) => {
+        if (prev[currentPage + 1]) return prev;
+
+        return {
+          ...prev,
+          [currentPage + 1]: couponsData.nextCursor,
+        };
+      });
+    }
+  }, [couponsData, currentPage]);
+
   const currentPageIds = useMemo(() => coupons.map((c: Coupon) => c.couponId), [coupons]);
   const isAllSelected = currentPageIds.length > 0 && currentPageIds.every((id) => selectedIds.includes(id));
 
@@ -169,7 +188,7 @@ export default function Coupons() {
     setSelectedIds((prev) => (checked ? [...prev, id] : prev.filter((v) => v !== id)));
   }, []);
 
-  const totalPages = Math.ceil(10 / itemsPerPage);
+  const totalPages = Math.ceil((couponsData?.totalElements ?? 0) / itemsPerPage);
 
   const handlePageChange = (uiPageOneBased: number) => {
     setCurrentPage(uiPageOneBased);
@@ -178,6 +197,7 @@ export default function Coupons() {
 
   const handleSearchSubmit = () => {
     setCurrentPage(1);
+    setCursors({ 1: null });
   };
 
   const handleCouponCreate = () => {

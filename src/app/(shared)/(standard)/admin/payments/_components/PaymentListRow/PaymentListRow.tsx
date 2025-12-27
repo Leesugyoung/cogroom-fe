@@ -70,7 +70,7 @@ export default function PaymentListRow({ payment, checked, onCheckToggle }: Paym
       <S.OtherCell>{payment.planName}</S.OtherCell>
       <S.Cell>{payment.category}</S.Cell>
       <S.CountCell>{payment.count}</S.CountCell>
-      <S.Cell>{payment.price.toLocaleString()}원</S.Cell>
+      <S.Cell>{payment.price?.toLocaleString() ?? '-'}원</S.Cell>
       <S.Cell>{getPaymentMethod(payment.method)}</S.Cell>
       <S.Cell>{getStatusText(payment.status)}</S.Cell>
       <S.DayCell>

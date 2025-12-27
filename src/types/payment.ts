@@ -167,7 +167,7 @@ export interface PaymentHistoryApiResponse extends ApiResponse {
 }
 
 export interface PaymentHistoryParams {
-  cursor?: number;
+  cursor?: number | null;
   sort?: string;
   size?: number;
 }
