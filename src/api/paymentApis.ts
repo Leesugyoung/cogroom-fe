@@ -70,9 +70,11 @@ const completePlan = async ({ paymentHistoryId, paymentMethod }: CompletePlanReq
 
 /** 플랜 변경 */
 const changePlan = async ({ paymentHistoryId, applyNow }: ChangePlanRequest) => {
-  const { data } = await axiosInstance.patch<ApiResponse>(END_POINTS.PAYMENTS.CHANGE_PLAN, {
-    paymentHistoryId,
-    applyNow,
+  const { data } = await axiosInstance.patch<ApiResponse>(END_POINTS.PAYMENTS.CHANGE_PLAN, null, {
+    params: {
+      paymentHistoryId,
+      applyNow,
+    },
   });
 
   return data;

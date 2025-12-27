@@ -1,18 +1,22 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
 import { paymentApi } from '@/api/paymentApis';
 import { DEFAULT_PAYMENT_SUCCESS } from '@/constants/image';
+import { MEMBER_QUERY_KEYS } from '@/constants/queryKeys';
 import { useLargeModalStore, useMediumModalStore } from '@/stores/useModalStore2';
 
 export const useCompletePlanMutation = () => {
   const router = useRouter();
   const { open: largeStoreOpen, close: largeStoreClose } = useLargeModalStore();
   const { open: mediumStoreOpen, close: mediumStoreClose } = useMediumModalStore();
+  const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: paymentApi.completePlan,
     onSuccess: async () => {
+      queryClient.invalidateQueries({ queryKey: [...MEMBER_QUERY_KEYS.MEMBER_SUMMARY] });
+
       largeStoreOpen('info', {
         title: '결제 완료',
         description: '이제, 코그룸을 더욱 자유롭게 이용해보세요!',

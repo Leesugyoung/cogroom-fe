@@ -13,6 +13,7 @@ export const usePlanChangeMutation = () => {
     mutationFn: paymentApi.changePlan,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: MEMBER_QUERY_KEYS.MEMBER_SUBSCRIPTION });
+      queryClient.invalidateQueries({ queryKey: MEMBER_QUERY_KEYS.MEMBER_SUMMARY });
       openAlert('alert', { message: '플랜 변경이 완료되었습니다.' });
     },
     onError: (error: HTTPError) => {

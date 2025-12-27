@@ -86,7 +86,7 @@ export default function Payment() {
     if (couponApplyResult && couponApplyResult.finalPrice !== null) {
       return couponApplyResult.finalPrice.toLocaleString('ko-KR');
     }
-    return planInfo?.monthlyPrice?.toLocaleString('ko-KR') ?? '-';
+    return planInfo?.finalPrice?.toLocaleString('ko-KR') ?? '-';
   };
 
   /**
@@ -263,7 +263,11 @@ export default function Payment() {
                     <S.ArrowIcon>
                       <ArrowTurnDownRight />
                     </S.ArrowIcon>
-                    <S.InfoTag>기본 적용 할인</S.InfoTag>
+                    <S.InfoTag>
+                      {isFreeTrialAvailable(isTrialParam, userSummary?.isTrialUsed ?? false, selectedId)
+                        ? '무료 체험으로 시작'
+                        : '기본 적용 할인'}
+                    </S.InfoTag>
                   </S.TagWrapper>
 
                   <S.DiscountPrice>-{planInfo?.baseDiscountAmount?.toLocaleString('ko-KR') ?? 0} KRW</S.DiscountPrice>

@@ -26,12 +26,7 @@ export interface PaymentCardProps {
 
 const BASE_DESCRIPTIONS: Record<string, string[]> = {
   MONTH: ['월간 정기구독', '데일리, 커뮤니티 특별 혜택', '추후 포인트 적립 가점'],
-  YEAR: [
-    '연간 정기구독',
-    '모든 월간 구독 혜택 포함',
-    '데일리, 커뮤니티 특별 혜택 + 추가혜택',
-    '추후 포인트 적립 가점 ++',
-  ],
+  YEAR: ['연간 정기구독', '데일리, 커뮤니티 특별 혜택', '추후 포인트 적립 가점'],
 };
 
 export default function PaymentCard({
@@ -84,10 +79,11 @@ export default function PaymentCard({
         <S.PlanCardContent>
           <S.PriceInfoWrapper>
             <S.DiscountInfo>
-              <span>{basePrice.toLocaleString('ko-KR')}원</span> → {finalPrice.toLocaleString('ko-KR')}원
+              <span>{basePrice.toLocaleString('ko-KR')}원</span> →{' '}
+              {isFreeTrial ? 0 : finalPrice.toLocaleString('ko-KR')}원
             </S.DiscountInfo>
             <S.FinalPrice>
-              <S.Price>{monthlyPrice.toLocaleString('ko-KR')}원</S.Price>
+              <S.Price>{isFreeTrial ? 0 : monthlyPrice.toLocaleString('ko-KR')}원</S.Price>
               <S.Currency>KRW / 월</S.Currency>
             </S.FinalPrice>
           </S.PriceInfoWrapper>
