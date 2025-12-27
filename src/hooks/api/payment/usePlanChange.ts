@@ -1,15 +1,18 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { HTTPError } from '@/api/axios/errors/HTTPError';
 import { paymentApi } from '@/api/paymentApis';
+import { MEMBER_QUERY_KEYS } from '@/constants/queryKeys';
 import { useAlertModalStore } from '@/stores/useModalStore';
 
 export const usePlanChangeMutation = () => {
   const { open: openAlert } = useAlertModalStore();
+  const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: paymentApi.changePlan,
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: MEMBER_QUERY_KEYS.MEMBER_SUBSCRIPTION });
       openAlert('alert', { message: '플랜 변경이 완료되었습니다.' });
     },
     onError: (error: HTTPError) => {
