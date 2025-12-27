@@ -94,6 +94,14 @@ export const requestKakaoBillingKey = async (opts: BillingRequestParams, isFromM
   const { finalPrice, paymentHistoryId, planName, customer } = opts;
   const redirectUrl = isFromMyPage ? PORTONE.MYPAGE_IDENTITY_REDIRECT_URL : PORTONE.PAYMENT_REDIRECT_URL;
 
+  const processedCustomer = customer
+    ? {
+        ...customer,
+        fullName: customer.fullName || undefined,
+        phoneNumber: customer.phoneNumber || undefined,
+      }
+    : undefined;
+
   return await PortOne.requestIssueBillingKey({
     storeId: PORTONE.STORE_ID,
     currency: finalPrice ? 'KRW' : undefined,
@@ -103,7 +111,7 @@ export const requestKakaoBillingKey = async (opts: BillingRequestParams, isFromM
     channelKey: PORTONE.CHANNEL_KEYS.KAKAO,
     issueId: paymentHistoryId ? String(paymentHistoryId) : `${crypto.randomUUID()}`,
     issueName: planName || '카카오페이 등록',
-    customer,
+    customer: processedCustomer,
   });
 };
 
