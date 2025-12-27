@@ -61,8 +61,9 @@ export const PaymentListMobile = () => {
   }
 
   const getStatusText = (status: string) => {
-    if (status === '정상') return '정상';
-    if (status === '취소') return '취소';
+    if (status === 'PAID') return '정상';
+    if (status === 'CANCELED') return '취소';
+    if (status === 'PENDING') return '보류';
     return '실패';
   };
 
@@ -80,7 +81,7 @@ export const PaymentListMobile = () => {
           </S.PaymentInfo>
           <S.PaymentAmount>
             <S.PlanName>{payment.planName}</S.PlanName>
-            <S.Amount>{payment.amount.toLocaleString()} KRW</S.Amount>
+            <S.Amount>{payment.amount?.toLocaleString() ?? '0'} KRW</S.Amount>
           </S.PaymentAmount>
           <S.DetailButtonWrapper>
             <TextButton

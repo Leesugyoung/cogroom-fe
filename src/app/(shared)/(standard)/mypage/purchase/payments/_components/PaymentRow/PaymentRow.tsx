@@ -20,10 +20,11 @@ export default function PaymentRow({ payment }: PaymentRowProps) {
   const getStatusText = () => {
     if (payment.status === 'COMPLETED') return '정상';
     if (payment.status === 'CANCELED') return '취소';
+    if (payment.status === 'PENDING') return '보류';
     return '실패';
   };
 
-  const isError = payment.status === 'CANCELED' || payment.status === 'FAILED';
+  const isError = payment.status === 'CANCELED' || payment.status === 'FAILED' || payment.status === 'PENDING';
 
   return (
     <S.Row>
@@ -31,7 +32,7 @@ export default function PaymentRow({ payment }: PaymentRowProps) {
       <S.Cell>
         <S.StatusText isError={isError}>{getStatusText()}</S.StatusText>
       </S.Cell>
-      <S.Cell>{payment.amount.toLocaleString()} KRW</S.Cell>
+      <S.Cell>{payment.amount?.toLocaleString() ?? '0'} KRW</S.Cell>
       <S.Cell>
         {formatDayAsDotYYYYMMDD(payment.paymentDate)} {formatTimeAsHHmm(payment.paymentDate)}
       </S.Cell>

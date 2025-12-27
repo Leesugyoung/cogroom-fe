@@ -56,7 +56,7 @@ export const Status = styled.div<{ status: string }>`
   color: ${({ theme, status }) => {
     if (status === '정상') return theme.semantic.label.normal;
     if (status === '취소') return theme.palette.red[60];
-    return theme.palette.red[60]; // 실패도 red[60]
+    return theme.palette.red[60];
   }};
 `;
 
