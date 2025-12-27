@@ -29,8 +29,8 @@ export const PlanDescription = ({ subscription }: PlanDescriptionProps) => {
 
   const isPremium = !isFreePlan && subscription;
   const premiumDays =
-    isPremium && subscription?.startedAt && subscription?.nextPaymentDate
-      ? calculateDaysBetween(subscription.startedAt, subscription.nextPaymentDate)
+    isPremium && subscription?.startedAt
+      ? calculateDaysBetween(subscription.startedAt, new Date().toISOString()) + 1
       : 0;
 
   const getButtonLabel = () => {
