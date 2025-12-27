@@ -17,7 +17,7 @@ interface DailyQuestionCardProps {
   questionId: number;
   question: string;
   answer: string;
-  answerDate: string;
+  answerDate: string | undefined;
   initialOpen?: boolean;
   updatable?: boolean;
 }

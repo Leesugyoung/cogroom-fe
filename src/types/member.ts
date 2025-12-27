@@ -49,7 +49,7 @@ export type UserDaily = {
   answer: string;
   assignedDate: string;
   answerDate: string;
-  questionId: number;
+  assignedQuestionId: number;
   updatable: boolean;
 };
 

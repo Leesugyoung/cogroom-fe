@@ -4,6 +4,7 @@ import ScriptX from '@/assets/icons/script-x.svg';
 import EmptyState from '@/components/organisms/EmptyState/EmptyState';
 import Loading from '@/components/organisms/Loading/Loading';
 import useGetUserDailyQuery from '@/hooks/api/member/useGetUserDaily';
+import { formatDayAsDashYYYYMMDD } from '@/utils/date/formatDay';
 
 import DailyQuestionCard from './_components/DailyQuestionCard/DailyQuestionCard';
 import * as S from './page.styled';
@@ -16,13 +17,13 @@ export default function Daily() {
 
   return (
     <S.DailyContainer>
-      {data.map(({ questionId, question, answer, answerDate, updatable }, index) => (
+      {data.map(({ assignedQuestionId, question, answer, answerDate, updatable }, index) => (
         <DailyQuestionCard
-          key={questionId}
-          questionId={questionId}
+          key={assignedQuestionId}
+          questionId={assignedQuestionId}
           question={question}
           answer={answer}
-          answerDate={answerDate}
+          answerDate={formatDayAsDashYYYYMMDD(answerDate)}
           initialOpen={index === 0}
           updatable={updatable}
         />
