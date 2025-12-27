@@ -37,7 +37,7 @@ export default function CouponBox({ paymentHistoryId }: CouponBoxModalProps) {
   const { data: appliedCouponData } = useGetAppliedCoupon({ paymentHistoryId });
 
   const [selectedCouponId, setSelectedCouponId] = useState<number | null>(
-    appliedCouponData?.couponInfo.couponHistoryId || null,
+    appliedCouponData?.couponInfo?.couponHistoryId || null,
   );
 
   const { observerRef } = useScroll({
