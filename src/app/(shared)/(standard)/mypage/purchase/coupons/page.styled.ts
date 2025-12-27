@@ -19,6 +19,9 @@ export const CouponForm = styled.form`
 export const PaginationWrapper = styled.div`
   margin: 0 auto;
   padding: 2.4rem 0;
+
+  display: flex;
+  justify-content: center;
 `;
 
 export const ResponsiveWrpaper = styled.div`
