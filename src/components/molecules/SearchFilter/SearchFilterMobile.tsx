@@ -88,13 +88,13 @@ export default function SearchFilterMobile({
               />
             ))}
 
-            {fields.dateRange && (
+            {/* {fields.dateRange && (
               <DateRangeController
                 control={control}
                 startName={fields.dateRange.startDateName || 'startDate'}
                 endName={fields.dateRange.endDateName || 'endDate'}
               />
-            )}
+            )} */}
 
             <ActionButton action={action} />
           </S.FilterSection>
