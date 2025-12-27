@@ -8,39 +8,35 @@ import TextButton from '@/components/atoms/TextButton/TextButton';
 import { useChangeDefaultPaymentMethodMutation } from '@/hooks/api/member/useChangeDefaultPaymentMethod';
 import { useDeletePaymentMethodMutation } from '@/hooks/api/member/useDeletePaymentMethod';
 import useGetPaymentMethod from '@/hooks/api/member/useGetPaymentMethod';
-import { useRegisterPaymentMethod } from '@/hooks/api/payment/useRegisterPaymentMethod';
+import { usePaymentProcessor } from '@/hooks/api/payment/usePaymentProcessor';
 import { useLargeModalStore } from '@/stores/useModalStore2';
+import { usePaymentStore } from '@/stores/usePaymentStore';
 
 import * as S from './PaymentMethod.styled';
 
 export const PaymentMethod = () => {
-  const { registerPaymentMethod } = useRegisterPaymentMethod();
+  const { registerBillingMethod } = usePaymentProcessor();
+  const isResuming = usePaymentStore((state) => state.isResuming);
+
   const { data: paymentMethod, refetch } = useGetPaymentMethod();
   const { deletePaymentMethod } = useDeletePaymentMethodMutation();
   const { changeDefaultPaymentMethod } = useChangeDefaultPaymentMethodMutation();
   const { open: largeStoreOpen, close: largeStoreClose } = useLargeModalStore();
 
   const handleAddCard = () => {
-    registerPaymentMethod({
+    registerBillingMethod({
       paymentMethod: 'CARD',
-      billingParams: {
-        finalPrice: 0,
-        planName: '카드 등록',
-      },
       isFromMyPage: true,
     });
   };
 
   const handleAddKakaoPay = () => {
-    registerPaymentMethod({
+    registerBillingMethod({
       paymentMethod: 'KAKAO_PAY',
-      billingParams: {
-        finalPrice: 0,
-        planName: '카카오페이 등록',
-      },
       isFromMyPage: true,
     });
   };
+
   const cardPaymentMethods = paymentMethod?.filter((item) => item.paymentType === 'CARD') || [];
   const hasKakaoPayment = paymentMethod?.some((item) => item.paymentType === 'KAKAO_PAY');
   const kakaoPayment = paymentMethod?.find((item) => item.paymentType === 'KAKAO_PAY');
@@ -120,6 +116,7 @@ export const PaymentMethod = () => {
               interactionVariant='normal'
               iconLeft={<Plus />}
               onClick={handleAddCard}
+              isDisabled={isResuming}
             />
           </S.MobileAddButtonWrapper>
         </S.ButtonBox>
@@ -158,6 +155,7 @@ export const PaymentMethod = () => {
               interactionVariant='normal'
               iconLeft={<Plus />}
               onClick={handleAddCard}
+              isDisabled={isResuming}
             />
           </S.ButtonBox>
         </S.DesktopAddButtonWrapper>
@@ -186,6 +184,7 @@ export const PaymentMethod = () => {
                 interactionVariant='normal'
                 iconLeft={<Plus />}
                 onClick={handleAddKakaoPay}
+                isDisabled={isResuming}
               />
             </S.MobileAddButtonWrapper>
           )}
@@ -226,6 +225,7 @@ export const PaymentMethod = () => {
                 interactionVariant='normal'
                 iconLeft={<Plus />}
                 onClick={handleAddKakaoPay}
+                isDisabled={isResuming}
               />
             </S.ButtonBox>
           </S.DesktopAddButtonWrapper>

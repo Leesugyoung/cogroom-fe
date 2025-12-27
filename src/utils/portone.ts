@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import PortOne from '@portone/browser-sdk/v2';
 
 import { PORTONE } from '@/constants/api';
@@ -24,55 +26,59 @@ export type BillingRequestParams = {
 const ALERT_PAYMENT_ERROR = '결제 시스템 설정에 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.';
 
 /**
- * 본인 인증 요청 유틸리티 함수
- * 필요한 결제 상태는 호출 전 Session Storage에 저장됩니다.
+ * PortOne 응답의 에러 여부를 체크하는 공통 로직
  */
-export const requestIdentityVerification = async (isFromMyPage: boolean = false): Promise<IdentityResponse | null> => {
+const handlePortOneResponse = <T>(response: any): T => {
+  // 1. 응답이 없거나 code가 존재하면 실패로 간주
+  if (!response || response.code) {
+    const errorMessage = response?.message || '결제 처리 중 오류가 발생했습니다.';
+    throw new Error(errorMessage);
+  }
+  return response as T;
+};
+
+/**
+ * 본인 인증 요청
+ */
+export const requestIdentityVerification = async (isFromMyPage: boolean = false): Promise<IdentityResponse> => {
   const redirectUrl = isFromMyPage ? PORTONE.MYPAGE_IDENTITY_REDIRECT_URL : PORTONE.IDENTITY_REDIRECT_URL;
 
   if (!PORTONE.STORE_ID || !PORTONE.CHANNEL_KEYS.IDENTITY || !redirectUrl) {
-    alert(ALERT_PAYMENT_ERROR);
-    return null;
+    throw new Error(ALERT_PAYMENT_ERROR);
   }
-
-  const id = `identity-verification-${crypto.randomUUID()}`;
 
   const response = await PortOne.requestIdentityVerification({
     storeId: PORTONE.STORE_ID,
-    identityVerificationId: id,
+    identityVerificationId: `identity-verification-${crypto.randomUUID()}`,
     channelKey: PORTONE.CHANNEL_KEYS.IDENTITY,
     redirectUrl,
   });
 
-  if (!response || response.code) {
-    return null;
-  }
-
-  return response;
+  return handlePortOneResponse<IdentityResponse>(response);
 };
 
 /**
  * 이니시스 카드 정기결제 빌링키 요청 유틸 함수
  */
-export const requestInicisBillingKey = async (opts: BillingRequestParams) => {
+export const requestInicisBillingKey = async (opts: BillingRequestParams, isFromMyPage: boolean = false) => {
   if (!PORTONE.STORE_ID || !PORTONE.CHANNEL_KEYS.INICIS) {
-    alert(ALERT_PAYMENT_ERROR);
-    return null;
+    throw new Error(ALERT_PAYMENT_ERROR); // alert 대신 에러를 던져 handlePortOneResponse와 흐름 통일
   }
 
   const { finalPrice, paymentHistoryId, planName, customer } = opts;
+  // 마이페이지 여부에 따른 리다이렉트 URL 결정
+  const redirectUrl = isFromMyPage ? PORTONE.MYPAGE_IDENTITY_REDIRECT_URL : PORTONE.PAYMENT_REDIRECT_URL;
 
   return await PortOne.requestIssueBillingKey({
     storeId: PORTONE.STORE_ID,
-    currency: 'KRW',
-    redirectUrl: PORTONE.PAYMENT_REDIRECT_URL,
+    currency: finalPrice ? 'KRW' : undefined,
+    redirectUrl,
     offerPeriod: { interval: '1m' },
-
-    displayAmount: finalPrice,
+    displayAmount: finalPrice || undefined,
     billingKeyMethod: 'CARD',
     channelKey: PORTONE.CHANNEL_KEYS.INICIS,
-    issueId: String(paymentHistoryId),
-    issueName: planName,
+    issueId: paymentHistoryId ? String(paymentHistoryId) : `${crypto.randomUUID()}`,
+    issueName: planName || '카드 등록',
     customer,
   });
 };
@@ -80,40 +86,49 @@ export const requestInicisBillingKey = async (opts: BillingRequestParams) => {
 /**
  * 카카오페이 정기결제 빌링키 요청 유틸 함수
  */
-export const requestKakaoBillingKey = async (opts: BillingRequestParams) => {
+export const requestKakaoBillingKey = async (opts: BillingRequestParams, isFromMyPage: boolean = false) => {
   if (!PORTONE.STORE_ID || !PORTONE.CHANNEL_KEYS.KAKAO) {
-    alert(ALERT_PAYMENT_ERROR);
-    return null;
+    throw new Error(ALERT_PAYMENT_ERROR);
   }
 
   const { finalPrice, paymentHistoryId, planName, customer } = opts;
+  const redirectUrl = isFromMyPage ? PORTONE.MYPAGE_IDENTITY_REDIRECT_URL : PORTONE.PAYMENT_REDIRECT_URL;
 
   return await PortOne.requestIssueBillingKey({
     storeId: PORTONE.STORE_ID,
-    currency: 'KRW',
-    redirectUrl: PORTONE.PAYMENT_REDIRECT_URL,
-
-    displayAmount: finalPrice,
+    currency: finalPrice ? 'KRW' : undefined,
+    redirectUrl,
+    displayAmount: finalPrice || undefined,
     billingKeyMethod: 'EASY_PAY',
     channelKey: PORTONE.CHANNEL_KEYS.KAKAO,
-    issueId: String(paymentHistoryId),
-    issueName: planName,
+    issueId: paymentHistoryId ? String(paymentHistoryId) : `${crypto.randomUUID()}`,
+    issueName: planName || '카카오페이 등록',
     customer,
   });
 };
 
 /**
- * 결제 수단에 따라 적절한 빌링키 발급 요청 유틸 함수를 호출하는 메인 함수
+ * 빌링키 통합 요청 함수
  */
-export const requestBillingKey = async (method: PaymentMethod, params: BillingRequestParams) => {
+export const requestBillingKey = async (
+  method: PaymentMethod,
+  params: BillingRequestParams,
+  isFromMyPage: boolean = false,
+) => {
+  let response;
+
   switch (method) {
     case 'CARD':
-      return requestInicisBillingKey(params);
+      response = await requestInicisBillingKey(params, isFromMyPage);
+      break;
     case 'KAKAO_PAY':
-      return requestKakaoBillingKey(params);
+      response = await requestKakaoBillingKey(params, isFromMyPage);
+      break;
     default:
-      throw new Error(`[requestBillingKey] Unsupported billing method: ${method}`);
+      throw new Error(`지원하지 않는 결제 수단입니다: ${method}`);
   }
+
+  return handlePortOneResponse(response);
 };
 
 /**

@@ -1,110 +1,123 @@
 import { useVerifyPaymentMutation } from '@/hooks/api/payment/useVerifyPayment';
 import { clearPaymentState, savePaymentState } from '@/stores/paymentStorage';
-import { PaymentMethod, VerifyPaymentData } from '@/types/payment';
+import { PaymentMethod } from '@/types/payment';
 import { requestIdentityVerification, requestBillingKey, BillingRequestParams } from '@/utils/portone';
 
 import { useCompletePlanMutation } from './useCompletePlan';
 
-/**
- * 결제 플로우를 처리하는 커스텀 훅
- */
 export const usePaymentProcessor = () => {
   const { completePlan } = useCompletePlanMutation();
   const { verifyPayment } = useVerifyPaymentMutation();
 
   /**
-   * 서버 검증 후 빌링키 생성 로직 (verifyPayment 성공 후 실행)
+   * 결제 수단 유효성 검사
+   * @param resumedIdentityId: 본인 인증 리다이렉트 후 돌아온 경우 전달받는 ID
    */
-  const handleBillingKeyCreation = async (data: VerifyPaymentData, paymentMethod: PaymentMethod) => {
-    const { finalPrice, planName, email, phoneNumber, name, paymentHistoryId, memberId } = data;
+  const validatePaymentMethod = async ({
+    paymentMethod,
+    paymentHistoryId,
+    resumedIdentityId,
+    isFromMyPage,
+  }: {
+    paymentMethod: PaymentMethod;
+    paymentHistoryId?: number;
+    resumedIdentityId?: string;
+    isFromMyPage?: boolean;
+  }) => {
+    let identityVerificationId = resumedIdentityId;
 
-    const params: BillingRequestParams = {
-      finalPrice,
-      planName,
-      paymentHistoryId,
-      customer: { customerId: String(memberId), fullName: name, phoneNumber, email },
-    };
-
-    const billingKeyRes = await requestBillingKey(paymentMethod, params);
-
-    if (!billingKeyRes || (billingKeyRes as { code?: string }).code) {
-      alert('결제 정보를 등록하는 데 실패하였습니다.');
-      return;
+    // CARD이면서, 아직 인증 ID가 없는 경우에만 인증 창 실행
+    if (paymentMethod === 'CARD' && !identityVerificationId) {
+      const identityRes = await requestIdentityVerification(isFromMyPage);
+      identityVerificationId = identityRes?.identityVerificationId;
     }
 
-    completePlan({ paymentHistoryId, paymentMethod });
+    // 서버 검증 (인증 ID가 있든 없든(카카오페이 등) 공통 실행)
+    return await verifyPayment({
+      identityVerificationId,
+      paymentHistoryId,
+    });
   };
 
   /**
-   * 신규 결제 흐름 (서버 검증 및 빌링키 생성) 로직
-   * 본인 인증 후 재개되는 흐름에 사용됩니다.
+   * 빌링키 등록 프로세스
+   * @param resumedIdentityId: 리다이렉트 재개 시 사용하는 인증 ID
    */
-  const handleNewPayment = async (
-    paymentHistoryId: number,
-    paymentMethod: PaymentMethod,
-    identityVerificationId?: string,
-  ) => {
+  const registerBillingMethod = async ({
+    paymentMethod,
+    paymentHistoryId,
+    planId,
+    resumedIdentityId,
+    isFromMyPage,
+  }: {
+    paymentMethod: PaymentMethod;
+    paymentHistoryId?: number;
+    planId?: number;
+    resumedIdentityId?: string;
+    isFromMyPage?: boolean;
+  }): Promise<boolean> => {
     try {
-      const verifyData = await verifyPayment({
-        identityVerificationId,
+      // 1. 처음 시작하는 경우(resumedIdentityId 없음)에만 세션에 상태 저장
+      if (!resumedIdentityId) {
+        savePaymentState({ paymentHistoryId, paymentMethod, planId });
+      }
+      // 2. 수단 검증 (본인인증 포함) - 주입받은 인증 ID가 있으면 validatePaymentMethod가 인증 창을 띄우지 않음
+      const verifyData = await validatePaymentMethod({
+        paymentMethod,
         paymentHistoryId,
+        resumedIdentityId,
+        isFromMyPage,
       });
 
-      await handleBillingKeyCreation(verifyData, paymentMethod);
+      // 3. 빌링키 발급 요청 파라미터 구성
+      const params: BillingRequestParams = {
+        finalPrice: verifyData.finalPrice,
+        planName: verifyData.planName,
+        paymentHistoryId: verifyData.paymentHistoryId,
+        customer: {
+          customerId: String(verifyData.memberId),
+          fullName: verifyData.name,
+          phoneNumber: verifyData.phoneNumber,
+          email: verifyData.email,
+        },
+      };
+
+      // 4. PG사 빌링키 발급 요청
+      await requestBillingKey(paymentMethod, params, isFromMyPage);
+
       return true;
-    } catch (error) {
-      alert('결제에 실패하였습니다');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : '결제 수단 등록 중 오류가 발생했습니다.';
+      alert(message);
       return false;
     } finally {
-      // 결제 성공/실패와 관계없이 임시 상태 정리
       clearPaymentState();
     }
   };
 
   /**
-   * 결제 흐름 시작 (빌링키 유무, 구독 상태에 따라 분기)
+   * 전체 결제/구독 플로우 시작
    */
-  const startPaymentFlow = async (
-    paymentHistoryId: number,
-    billingKeyExists: boolean,
-    paymentMethod: PaymentMethod,
-    isSubscribed: boolean,
-    planId: number,
-  ) => {
-    // 1. 플랜 변경 (구독 중, 빌링키 있음)
-    if (isSubscribed && billingKeyExists) {
-      return;
+  const startPaymentFlow = async ({
+    paymentMethod,
+    paymentHistoryId,
+    billingKeyExists,
+    planId,
+  }: {
+    paymentMethod: PaymentMethod;
+    paymentHistoryId: number;
+    billingKeyExists: boolean;
+    planId: number;
+  }) => {
+    // 빌링키가 없으면 등록 프로세스 먼저 진행
+    if (!billingKeyExists) {
+      const isSuccess = await registerBillingMethod({ paymentMethod, paymentHistoryId, planId });
+      if (!isSuccess) return;
     }
 
-    // 2. 빌링키 재사용 (구독 중 아님, 빌링키 있음)
-    if (!isSubscribed && billingKeyExists) {
-      completePlan({ paymentHistoryId, paymentMethod });
-      return;
-    }
-
-    // 3. 신규 빌링키 생성 플로우 (빌링키 없음, 구독 중 아님)
-    if (!billingKeyExists && !isSubscribed) {
-      // 본인 인증이 필요한 경우 (카드, 휴대폰)
-      if (['CARD'].includes(paymentMethod)) {
-        // 상태를 저장하고 본인 인증 리다이렉트 요청
-        savePaymentState({ paymentHistoryId, paymentMethod, planId });
-
-        const identityRes = await requestIdentityVerification();
-
-        if (!identityRes) {
-          clearPaymentState();
-          alert('본인인증에 실패하였습니다');
-          return;
-        }
-
-        await handleNewPayment(paymentHistoryId, paymentMethod, identityRes.identityVerificationId);
-        return;
-      } else {
-        // 본인 인증이 필요 없는 경우, 바로 신규 결제 흐름 시작
-        await handleNewPayment(paymentHistoryId, paymentMethod);
-      }
-    }
+    // 최종 결제/플랜 적용 완료
+    completePlan({ paymentHistoryId, paymentMethod });
   };
 
-  return { startPaymentFlow, handleNewPayment };
+  return { startPaymentFlow, registerBillingMethod };
 };

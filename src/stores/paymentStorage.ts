@@ -5,9 +5,9 @@ export const PAYMENT_STATE_STORAGE_KEY = 'portone_payment_state';
 
 // Session Storage에 저장될 데이터 구조
 export interface StoredPaymentState {
-  paymentHistoryId: number;
+  paymentHistoryId?: number;
   paymentMethod: PaymentMethod;
-  planId: number;
+  planId?: number;
 }
 
 /**

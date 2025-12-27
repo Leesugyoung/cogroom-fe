@@ -16,10 +16,10 @@ import { useGetBillingKey } from '@/hooks/api/payment/useGetBillingKey';
 import { useGetPlanInfo } from '@/hooks/api/payment/useGetPlanInfo';
 import { useGetPlans } from '@/hooks/api/payment/useGetPlans';
 import { usePaymentProcessor } from '@/hooks/api/payment/usePaymentProcessor';
-import { usePaymentResume } from '@/hooks/api/payment/usePaymentResume';
 import { loadPaymentState } from '@/stores/paymentStorage';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useLargeModalStore } from '@/stores/useModalStore2';
+import { usePaymentStore } from '@/stores/usePaymentStore';
 import { PaymentMethod } from '@/types/payment';
 import { checkPaymentMethods } from '@/utils/portone';
 
@@ -60,15 +60,13 @@ export default function Payment() {
   const { data: couponApplyResult } = useGetAppliedCoupon({ paymentHistoryId: planInfo?.paymentHistoryId });
 
   const { startPaymentFlow } = usePaymentProcessor();
-  const { isResuming } = usePaymentResume();
+  const isResuming = usePaymentStore((state) => state.isResuming);
 
   useEffect(() => {
-    // 1. URL에 identityVerificationId 파라미터가 있고,
-    // 2. 현재 상태가 처리 중이 아닌 경우 (isResuming은 usePaymentResume 내부에서 처리)
     if (identityVerificationId) {
       const storedState = loadPaymentState();
 
-      if (storedState) {
+      if (storedState && storedState.planId) {
         // 세션에 저장된 planId와 paymentMethod로 상태를 복원
         setSelectedId(storedState.planId);
         setSelectedPaymentMethod(storedState.paymentMethod);
@@ -209,13 +207,12 @@ export default function Payment() {
         billingKeyExistsForSelectedMethod = registeredStatus.hasKAKAOPAY;
       }
 
-      await startPaymentFlow(
-        planInfo.paymentHistoryId,
-        billingKeyExistsForSelectedMethod,
-        selectedPaymentMethod,
-        isSubscribed(),
-        selectedId,
-      );
+      await startPaymentFlow({
+        paymentMethod: selectedPaymentMethod,
+        paymentHistoryId: planInfo.paymentHistoryId,
+        billingKeyExists: billingKeyExistsForSelectedMethod,
+        planId: selectedId,
+      });
 
       setIsFlowProcessing(false);
     }
