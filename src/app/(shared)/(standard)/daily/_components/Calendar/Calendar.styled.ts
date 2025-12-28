@@ -33,9 +33,8 @@ export const Title = styled.h1`
 
 export const CalendarWrapper = styled.div`
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  gap: 1.6rem;
 
   max-width: 55rem;
   width: 100%;
@@ -46,10 +45,24 @@ export const CalendarWrapper = styled.div`
   border-radius: 1.2rem;
 `;
 
+export const Calendar = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6rem;
+`;
+
 export const MonthSelector = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+
+  width: 100%;
+`;
+
+export const Month = styled.div`
+  display: flex;
+  align-items: center;
   gap: 0.4rem;
 
   ${({ theme }) => theme.typography.body1.semibold}

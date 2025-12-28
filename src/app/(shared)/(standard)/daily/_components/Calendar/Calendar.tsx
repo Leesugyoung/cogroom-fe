@@ -3,9 +3,10 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 
-import ArrowLeft from '@/assets/icons/arrowleft.svg';
 import ArrowRight from '@/assets/icons/arrowright.svg';
 import ChevronDown from '@/assets/icons/chevrondown.svg';
+import ChevronLeft from '@/assets/icons/chevronleft.svg';
+import ChevronRight from '@/assets/icons/chevronright.svg';
 import ChevronUp from '@/assets/icons/chevronup.svg';
 import SolidButton from '@/components/atoms/SolidButton/SolidButton';
 import { WEEK_DAYS } from '@/constants/common';
@@ -148,38 +149,45 @@ export default function Calendar({ streakData, hasAnswered, startMonth }: Calend
       <S.CalendarContentWrapper>
         <S.Title>내 물방울 기록</S.Title>
         <S.CalendarWrapper>
-          <S.MonthSelector>
-            <S.MonthArrow
-              onClick={goToPrevMonth}
-              // 무료 사용자라면 이동 제한 로직은 화살표 버튼의 disabled와 별도로 작동합니다.
-              disabled={isAtStartMonth}
-            >
-              <ArrowLeft />
-            </S.MonthArrow>
-            {currentYear}년 {currentMonth}월
-            {/* 주/월 토글도 무료 사용자에게 제한을 둘 수 있습니다. (필요하다면 추가) */}
-            <S.BreadcrumbChevron onClick={() => setIsMonthly((prev) => !prev)}>
-              {isMonthly ? <ChevronUp /> : <ChevronDown />}
-            </S.BreadcrumbChevron>
-            <S.MonthArrow
-              onClick={goToNextMonth}
-              disabled={isAtCurrentMonth}
-            >
-              <ArrowRight />
-            </S.MonthArrow>
-          </S.MonthSelector>
-          <S.Grid>
-            {WEEK_DAYS.map((day) => (
-              <S.WeekDay key={day}>{day}</S.WeekDay>
-            ))}
-            {dates.map((date) => (
-              <DateCell
-                key={date}
-                date={getDateKey(date)} // DateCell에 일(day)만 표시
-                isAnswered={answeredDatesSet.has(date)} // 답변 여부 확인
-              />
-            ))}
-          </S.Grid>
+          <S.Calendar>
+            <S.MonthSelector>
+              <S.MonthArrow
+                onClick={goToPrevMonth}
+                // 무료 사용자라면 이동 제한 로직은 화살표 버튼의 disabled와 별도로 작동합니다.
+                disabled={isAtStartMonth}
+              >
+                <ChevronLeft />
+              </S.MonthArrow>
+
+              <S.Month>
+                {currentYear}년 {currentMonth}월
+                {/* 주/월 토글도 무료 사용자에게 제한을 둘 수 있습니다. (필요하다면 추가) */}
+                <S.BreadcrumbChevron onClick={() => setIsMonthly((prev) => !prev)}>
+                  {isMonthly ? <ChevronUp /> : <ChevronDown />}
+                </S.BreadcrumbChevron>
+              </S.Month>
+
+              <S.MonthArrow
+                onClick={goToNextMonth}
+                disabled={isAtCurrentMonth}
+              >
+                <ChevronRight />
+              </S.MonthArrow>
+            </S.MonthSelector>
+
+            <S.Grid>
+              {WEEK_DAYS.map((day) => (
+                <S.WeekDay key={day}>{day}</S.WeekDay>
+              ))}
+              {dates.map((date) => (
+                <DateCell
+                  key={date}
+                  date={getDateKey(date)} // DateCell에 일(day)만 표시
+                  isAnswered={answeredDatesSet.has(date)} // 답변 여부 확인
+                />
+              ))}
+            </S.Grid>
+          </S.Calendar>
         </S.CalendarWrapper>
         {isFirstAnswer ? (
           <FirstAnswerButton onClick={handleGoToReport} />
